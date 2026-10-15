@@ -48,7 +48,7 @@ async function systemeFetch<T>(path: string, init: RequestInit = {}): Promise<{ 
 }
 
 async function findContactByEmail(email: string): Promise<SystemeContact | null> {
-  const res = await systemeFetch<{ items?: SystemeContact[] }>(`/contacts?email=${encodeURIComponent(email)}&limit=1`);
+  const res = await systemeFetch<{ items?: SystemeContact[] }>(`/contacts?email=${encodeURIComponent(email)}&limit=10`);
   const found = res.data?.items?.find((c) => c.email.toLowerCase() === email.toLowerCase());
   return found ?? null;
 }

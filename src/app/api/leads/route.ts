@@ -34,7 +34,7 @@ function clientIp(req: NextRequest): string {
 function tagFor(source: LeadInsert["source"]): string {
   return source === "waitlist"
     ? process.env.SYSTEME_TAG_WAITLIST?.trim() || "FDP Waitlist"
-    : process.env.SYSTEME_TAG_FREE_GUIDE?.trim() || "Indulge in Wellness";
+    : process.env.SYSTEME_TAG_FREE_GUIDE?.trim() || "[EBOOK][REGISTO] Indulge in Wellness";
 }
 
 /** One identical success body for every accepted request, so nothing about stored data leaks. */
