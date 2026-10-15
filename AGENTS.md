@@ -37,7 +37,7 @@ Apply these to every string on the page, every placeholder, every alt text, and 
 - Mentorship: included in the €299, lasts **12 months**, live Q&A is **monthly** (changed from weekly by Leonor on 2026-10-12), runs on Zoom plus a private student group (platform to be confirmed by Leonor; keep wording generic until then).
 - Leonor: 10+ years as a professional baker and cake designer, 3 years studying nutrition, Integrative Nutrition Health Coach. Diagnosed with food intolerances, which led her to functional baking.
 - Program status: closed now, launch expected in 1 to 3 months. Until launch the primary CTA is "Join the waiting list". At launch, flip `LAUNCH_MODE` to `open` and every CTA points to the cart.
-- Lead capture (Leonor, 2026-10-15): the waiting list buttons link to the Systeme.io waiting list page and the free guide button links to the Systeme.io opt-in page (`LEAD_CAPTURE=systeme`, the default). The forms on this page and `/api/leads` are only used when `NEXT_PUBLIC_LEAD_CAPTURE=native`.
+- Lead capture (Leonor, 2026-10-15): the waiting list and free guide forms on this page send each contact to Systeme.io through `/api/leads` with the configured tag (`LEAD_CAPTURE=native`, the default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` removes the forms and links the buttons to the Systeme.io pages instead.
 
 ## 4. URLs and slugs (no link may break)
 

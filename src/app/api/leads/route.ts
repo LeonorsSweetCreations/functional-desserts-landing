@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { leadSchema, type LeadInsert } from "@/lib/leads-types";
 import { storeLead, markLeadSynced } from "@/lib/leads";
-import { syncLeadToSysteme } from "@/lib/systeme";
+import { isSystemeConfigured, syncLeadToSysteme } from "@/lib/systeme";
 import { hasServiceRole } from "@/lib/supabase";
 
 /**
@@ -51,9 +51,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Payload too large" }, { status: 413 });
   }
 
-  // On Vercel the filesystem is ephemeral, so the local JSON fallback would silently lose leads.
-  if (process.env.VERCEL && !hasServiceRole()) {
-    console.error("[leads] Supabase is not configured in a deployed environment");
+  // Without Supabase the contact goes straight to Systeme.io, which is the system of record
+  // for Leonor's email lists. On Vercel the filesystem is ephemeral, so the local JSON
+  // fallback is never used there: with neither backend configured the request is refused.
+  const systemeOnly = !hasServiceRole() && isSystemeConfigured();
+  if (process.env.VERCEL && !hasServiceRole() && !systemeOnly) {
+    console.error("[leads] Neither Supabase nor Systeme.io is configured in a deployed environment");
     return NextResponse.json({ ok: false, error: "Service unavailable" }, { status: 503 });
   }
 
@@ -82,6 +85,19 @@ export async function POST(req: NextRequest) {
     utm_campaign: d.utm?.campaign ?? null,
     consent: true,
   };
+
+  if (systemeOnly) {
+    const sync = await syncLeadToSysteme({
+      email: lead.email,
+      firstName: lead.first_name ?? undefined,
+      tagRef: tagFor(lead.source),
+    });
+    if (!sync.synced) {
+      console.error("[leads] Systeme.io sync failed:", sync.error);
+      return NextResponse.json({ ok: false, error: "Could not save your details" }, { status: 502 });
+    }
+    return NextResponse.json(OK);
+  }
 
   try {
     const stored = await storeLead(lead);

@@ -120,13 +120,13 @@ export const isOpen = LAUNCH_MODE === "open";
 
 /**
  * LEAD_CAPTURE (Leonor's decision on 2026-10-15)
- *   "systeme": every waiting list and free guide button links to the pages that
- *              already exist on Systeme.io (LINKS.waitingListPage, LINKS.freeGuidePage).
- *              No form on this page, no Supabase needed. Default.
- *   "native":  the forms on this page post to /api/leads (Supabase plus the Systeme.io API).
+ *   "native":  the forms on this page post to /api/leads, which creates the contact in
+ *              Systeme.io with the right tag (and stores it in Supabase when configured). Default.
+ *   "systeme": no form on this page; every waiting list and free guide button links to the
+ *              pages that already exist on Systeme.io (LINKS.waitingListPage, LINKS.freeGuidePage).
  */
 export const LEAD_CAPTURE: "systeme" | "native" =
-  process.env.NEXT_PUBLIC_LEAD_CAPTURE === "native" ? "native" : "systeme";
+  process.env.NEXT_PUBLIC_LEAD_CAPTURE === "systeme" ? "systeme" : "native";
 export const usesNativeForms = LEAD_CAPTURE === "native";
 
 /** Where the primary call to action goes while doors are closed. */

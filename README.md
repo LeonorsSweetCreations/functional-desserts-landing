@@ -38,7 +38,7 @@ Set `NEXT_PUBLIC_LAUNCH_MODE=open` in `.env.local` (or on Vercel) and redeploy. 
 
 ## Where the buttons go
 
-`NEXT_PUBLIC_LEAD_CAPTURE` (default `systeme`): the waiting list buttons link to the Systeme.io waiting list page and the free guide button links to the Systeme.io opt-in page. No form on this page, no database needed. Set it to `native` to use the forms on this page, which post to `/api/leads` (Supabase required in production).
+`NEXT_PUBLIC_LEAD_CAPTURE` (default `native`): the waiting list and free guide forms on this page post to `/api/leads`, which creates the contact in Systeme.io and assigns the tag (`SYSTEME_API_KEY`, `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`). Supabase is optional and keeps a copy of each lead. In production with neither configured the route answers 503. Set it to `systeme` to remove the forms and link the buttons to the Systeme.io waiting list and opt-in pages instead.
 
 ## Leads without Supabase (native mode only)
 

@@ -123,7 +123,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 ## Phase 3: Vercel + Supabase cloud (only after Leonor approves again)
 
 - [ ] Leonor signs in with `npx vercel login`, project linked, first deploy
-- [ ] Env vars on Vercel: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `NEXT_PUBLIC_LEAD_CAPTURE=systeme`
+- [ ] Env vars on Vercel: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `SYSTEME_API_KEY`, `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`
 - [ ] Domain `program.leonors.com` (chosen by Leonor on 2026-10-15) pointed at Vercel with a CNAME, then a redirect on Systeme.io from the old page to the new URL
 - [ ] GTM and Meta Pixel IDs added
 - [ ] End-to-end test with a real email
@@ -142,7 +142,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 ## Decisions of 2026-10-15
 
 - Price €299 one-time, plan 4 x €87.50 (total €350).
-- Buttons go to the Systeme.io pages: waiting list to `https://healthy.leonors.com/waiting-list`, free guide to `https://healthy.leonors.com/optinindulgeinwellness`. `LEAD_CAPTURE` in `src/config/site.ts`, default `systeme`. The on-page forms and the Supabase route stay in the code behind `NEXT_PUBLIC_LEAD_CAPTURE=native`.
+- Email capture: the forms on this page send the contact to Systeme.io with a tag (`LEAD_CAPTURE=native`, default; Supabase optional, the route works with the Systeme.io API key alone). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps the forms for buttons linking to the Systeme.io waiting list and opt-in pages. Decided after a first version that only linked to those pages.
 - Leonor approved phases 2 and 3 ("Segue com os passos necessários, para acrescentar esta página ao meu website").
 
 ## Open items (do not block)
