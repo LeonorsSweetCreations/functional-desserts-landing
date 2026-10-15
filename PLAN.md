@@ -124,7 +124,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 
 - [ ] Leonor signs in with `npx vercel login`, project linked, first deploy
 - [ ] Env vars on Vercel: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `NEXT_PUBLIC_LEAD_CAPTURE=systeme`
-- [ ] Domain: a subdomain of leonors.com pointed at Vercel (suggested `program.leonors.com`), then a redirect on Systeme.io from the old page to the new URL
+- [ ] Domain `program.leonors.com` (chosen by Leonor on 2026-10-15) pointed at Vercel with a CNAME, then a redirect on Systeme.io from the old page to the new URL
 - [ ] GTM and Meta Pixel IDs added
 - [ ] End-to-end test with a real email
 
