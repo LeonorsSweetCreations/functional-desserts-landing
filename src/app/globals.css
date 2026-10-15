@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* Brand tokens extracted from the leonors.com Elementor kit. No dark mode. */
+@theme {
+  --color-brand-pink: #e9a8a8;
+  --color-brand-pink-soft: #f6e6e3;
+  --color-brand-rose: #c5676e;
+  --color-brand-mauve: #a36e6d;
+  --color-brand-plum: #9e4072;
+
+  --color-brand-teal: #0f9598;
+  --color-brand-teal-dark: #086062;
+  --color-brand-teal-light: #6dc1c3;
+  --color-brand-teal-pale: #d6f1f2;
+
+  --color-brand-cream: #f4ede4;
+  --color-brand-sand: #f0e0cc;
+  --color-brand-linen: #eae0d2;
+
+  --color-brand-ink: #333333;
+  --color-brand-grey: #8b8686;
+  --color-brand-grey-dark: #7b7777;
+  --color-brand-stone: #908a82;
+  /* Body secondary text. Passes WCAG AA on cream (#f4ede4) and white. */
+  --color-brand-muted: #5e5a5a;
+
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-body: var(--font-montserrat), system-ui, sans-serif;
+
+  --shadow-card: 0 10px 30px -12px rgb(51 51 51 / 0.12);
+  --shadow-card-lg: 0 24px 50px -20px rgb(51 51 51 / 0.2);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--color-brand-cream);
+  color: var(--color-brand-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Reveal on scroll, CSS only. The html element gets .js from an inline
+   script in the layout; without JavaScript nothing is ever hidden.
+   RevealObserver toggles .is-visible via IntersectionObserver. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Decorative helpers */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.photo-frame {
+  position: relative;
+}
+.photo-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform: translate(14px, 14px);
+  background: var(--color-brand-pink);
+  opacity: 0.55;
+  z-index: 0;
+}
+.photo-frame > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Native accordion polish */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .chevron {
+  transform: rotate(180deg);
+}
+.chevron {
+  transition: transform 0.25s ease;
+}
+
+/* Focus ring consistent with the brand */
+:focus-visible {
+  outline: 3px solid var(--color-brand-teal);
+  outline-offset: 2px;
+}
