@@ -2,9 +2,10 @@ import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Cta } from "@/components/ui/Cta";
 import { Button } from "@/components/ui/Button";
+import { LeadForm } from "@/components/ui/LeadForm";
 import { HeroMedia } from "./HeroMedia";
-import { hero } from "@/content/copy";
-import { ANCHORS, isOpen } from "@/config/site";
+import { hero, forms } from "@/content/copy";
+import { ANCHORS, isOpen, usesNativeForms } from "@/config/site";
 
 export function Hero() {
   return (
@@ -26,8 +27,19 @@ export function Hero() {
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-muted">{hero.subheadline}</p>
 
+          {!isOpen && usesNativeForms ? (
+            /* Waiting list form in the hero (Leonor, 2026-10-16, option B). Same API and tag as the price card form. */
+            <div className="mt-8 max-w-xl rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-brand-linen backdrop-blur sm:p-6">
+              <p className="font-display text-xl text-brand-ink">{forms.waitlistTitle}</p>
+              <p className="mt-1 text-sm leading-relaxed text-brand-muted">{hero.waitlistNote}</p>
+              <div className="mt-4">
+                <LeadForm source="waitlist" idPrefix="hero" compact buttonLabel={forms.waitlistButton} successTitle={forms.waitlistSuccessTitle} successText={forms.waitlistSuccessText} />
+              </div>
+            </div>
+          ) : null}
+
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Cta labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} />
+            {isOpen || !usesNativeForms ? <Cta labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} /> : null}
             <Button href={`#${ANCHORS.course}`} variant="ghost" size="lg">
               {hero.secondaryCta}
             </Button>
@@ -44,7 +56,7 @@ export function Hero() {
             ))}
           </ul>
 
-          {!isOpen ? <p className="mt-6 max-w-lg text-sm leading-relaxed text-brand-muted">{hero.waitlistNote}</p> : null}
+          {!isOpen && !usesNativeForms ? <p className="mt-6 max-w-lg text-sm leading-relaxed text-brand-muted">{hero.waitlistNote}</p> : null}
         </div>
 
         <HeroMedia />

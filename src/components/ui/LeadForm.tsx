@@ -110,7 +110,7 @@ export function LeadForm({ source, buttonLabel, successTitle, successText, compa
       <label htmlFor={`${idPrefix}-consent`} className="flex items-start gap-3 text-sm leading-snug text-brand-muted">
         <input id={`${idPrefix}-consent`} name="consent" type="checkbox" required className="mt-1 h-4 w-4 shrink-0 accent-brand-teal-dark" />
         <span>
-          {forms.consent.replace(forms.privacyLinkText, "")}
+          {forms.consent.replace(`${forms.privacyLinkText}.`, "")}
           <a href={LINKS.privacy} className="underline decoration-brand-teal underline-offset-2 hover:text-brand-teal-dark" rel="noopener">
             {forms.privacyLinkText}
           </a>

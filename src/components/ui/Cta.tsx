@@ -3,8 +3,8 @@ import { Button } from "./Button";
 import { LINKS, WAITLIST_HREF, isOpen } from "@/config/site";
 
 /**
- * The primary call to action. In waitlist mode it opens the Systeme.io waiting
- * list page; in open mode it links to the Systeme.io cart. One place to change it.
+ * The primary call to action. In waitlist mode it scrolls to the waiting list form on the
+ * price card; in open mode it links to the Systeme.io cart. One place to change it.
  */
 export function Cta({
   labelOpen,

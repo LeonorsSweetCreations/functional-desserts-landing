@@ -107,7 +107,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 - [x] 1.16c Leonor reviewed the visual draft (2026-10-12) and her photos were pulled from her Drive into `public/images/` (list in the README there). On 2026-10-15 Leonor added her white horizontal wordmark (`logo-leonors-white.png`), from which the colour version for the header and footer was generated, the square emblem (`logo-emblem.png`) and the real guide mockup (`guide-mockup.png`) in the free guide section. Still missing: the hero video
 - [x] 1.17 Leonor reviews copy in `src/content/copy.ts` and approves (2026-10-15, with the price at €299 and the plan at 4 x €87.50)
 - [ ] 1.18 (optional now) Leonor creates Supabase project, pastes keys, migration applied, waitlist form tested end to end. Only needed if `NEXT_PUBLIC_LEAD_CAPTURE=native`
-- [ ] 1.19 (optional now) Leonor provides Systeme.io API key and tag names, sync tested. Only needed with `native` lead capture
+- [x] 1.19 Leonor provided the Systeme.io API key and the tag names, sync tested for both forms (2026-10-15 and 2026-10-16)
 
 ### Security (Leonor's five rules)
 
@@ -124,6 +124,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 
 - [x] Vercel project `functional-desserts-landing` (team leonors) linked to the GitHub repo, first production deploy on 2026-10-16. Every push to `main` deploys
 - [x] Env vars on Vercel (production and preview): `NEXT_PUBLIC_SITE_URL=https://program.leonors.com`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `NEXT_PUBLIC_LEAD_CAPTURE=native`, `SYSTEME_API_KEY` (sensitive), `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`
+- [x] CNAME `program` added by Leonor on Cloudflare (2026-10-16), `https://program.leonors.com/functionaldessertsprogram-main` answers 200 with a valid certificate
 - [x] Domain `program.leonors.com` added to the Vercel project (2026-10-16)
 - [ ] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate
 - [ ] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main`
@@ -144,7 +145,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 ## Decisions of 2026-10-15
 
 - Price €299 one-time, plan 4 x €87.50 (total €350).
-- Waiting list: every button opens the Systeme.io page `https://healthy.leonors.com/waiting-list` (Leonor, 2026-10-16, after the on-page form was tried). Free guide: the form on this page sends the contact to Systeme.io with the tag "[EBOOK][REGISTO] Indulge in Wellness" (`LEAD_CAPTURE=native`, default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps that form for a link to the opt-in page.
+- Waiting list (Leonor, 2026-10-16, option B): form on this page, in the hero and on the price card; every button scrolls to the price card form. Tag `FDP Waitlist`, the same one the Systeme.io page `https://healthy.leonors.com/waiting-list` assigns (confirmed on 2026-10-16 by Leonor's test on that page). Free guide: the form on this page sends the contact to Systeme.io with the tag "[EBOOK][REGISTO] Indulge in Wellness" (`LEAD_CAPTURE=native`, default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps that form for a link to the opt-in page.
 - Leonor approved phases 2 and 3 ("Segue com os passos necessários, para acrescentar esta página ao meu website").
 
 ## Open items (do not block)

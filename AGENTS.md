@@ -37,7 +37,7 @@ Apply these to every string on the page, every placeholder, every alt text, and 
 - Mentorship: included in the €299, lasts **12 months**, live Q&A is **monthly** (changed from weekly by Leonor on 2026-10-12), runs on Zoom plus a private student group (platform to be confirmed by Leonor; keep wording generic until then).
 - Leonor: 10+ years as a professional baker and cake designer, 3 years studying nutrition, Integrative Nutrition Health Coach. Diagnosed with food intolerances, which led her to functional baking.
 - Program status: closed now, launch expected in 1 to 3 months. Until launch the primary CTA is "Join the waiting list". At launch, flip `LAUNCH_MODE` to `open` and every CTA points to the cart.
-- Waiting list (Leonor, 2026-10-16): every "Join the waiting list" button opens `https://healthy.leonors.com/waiting-list`. No waiting list form on this page.
+- Waiting list (Leonor, 2026-10-16, option B): the sign-up form lives on this page, once in the hero and once on the price card (`#waitlist`). Every "Join the waiting list" button scrolls to the price card form. Both post to `/api/leads` with `source: "waitlist"` and the contact gets the Systeme.io tag `FDP Waitlist`, the same tag the Systeme.io page `https://healthy.leonors.com/waiting-list` assigns, so the same automation runs. That page stays live as a fallback (`NEXT_PUBLIC_LEAD_CAPTURE=systeme`).
 - Free guide (Leonor, 2026-10-15): the form on this page sends the contact to Systeme.io through `/api/leads` with the tag "[EBOOK][REGISTO] Indulge in Wellness" (`LEAD_CAPTURE=native`, the default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` replaces the form with a link to the Systeme.io opt-in page.
 
 ## 4. URLs and slugs (no link may break)
