@@ -104,8 +104,8 @@ export const transformation = {
       text: "No sugar crash, no bloating, no guilt, because you choose ingredients that nourish you and you know how to make them work.",
     },
     {
-      heading: "You bake for everyone at the table.",
-      text: "Coeliac disease, diabetes, lactose intolerance, a vegan diet. You know what to use for each one, and they ask for seconds.",
+      heading: "You bake one cake for everyone at the table.",
+      text: "Celiac, diabetic, lactose intolerant, vegan. One recipe adapted to everyone's needs, instead of a different cake for each person.",
     },
     {
       heading: "You never bake alone again.",
@@ -375,7 +375,7 @@ export const faq = {
       a: "They are made with whole ingredients, without refined sugar, gluten or dairy, and you learn what each ingredient does in your body. You will still eat them in sensible portions, but you will not get the crash or the bloating you get from the traditional version.",
     },
     {
-      q: "I have coeliac disease, diabetes or allergies. Can I use these recipes?",
+      q: "I have celiac disease, diabetes or allergies. Can I use these recipes?",
       a: "Yes. Every recipe is gluten-free, dairy-free and refined-sugar-free, and Module 3 teaches you how each ingredient behaves so you can adapt for your specific needs. If you have a medical condition, keep following your doctor's advice.",
     },
     {
