@@ -93,10 +93,10 @@ Nota de 15 e 16 de outubro de 2026: os botões da lista de espera abrem a págin
 
 - [ ] Projecto Supabase criado, migração aplicada, RLS confirmada no painel
 - [ ] Teste com a chave anon: `select * from leads` devolve 0 linhas
-- [ ] Env vars na Vercel, nunca no repositório
-- [ ] Repositório privado no GitHub
-- [ ] Verificar que `.env.local` não entrou no primeiro commit (`git log --all -- .env.local` vazio)
-- [ ] Confirmar os cabeçalhos de segurança em produção com `curl -I`
+- [x] Env vars na Vercel, nunca no repositório (2026-10-16; `SYSTEME_API_KEY` marcada como sensível)
+- [x] Repositório privado no GitHub (2026-10-15)
+- [x] Verificado: `git log --all -- .env.local` vazio (2026-10-15)
+- [x] Cabeçalhos confirmados no deploy de produção de 2026-10-16: CSP, HSTS, nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy
 - [ ] Testar o formulário em produção com um email real e confirmar que chega ao Supabase e ao Systeme.io
 - [ ] Rever este ficheiro sempre que se adicionar uma rota, tabela, integração ou variável
 

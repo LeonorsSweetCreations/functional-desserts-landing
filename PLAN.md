@@ -118,15 +118,17 @@ NEXT_PUBLIC_META_PIXEL_ID=
 ## Phase 2: GitHub (only after Leonor approves phase 1)
 
 - [x] `git init` and first commit on this machine (2026-10-15)
-- [ ] Leonor signs in with `gh auth login`, then private repo `functional-desserts-landing` created and pushed
+- [x] Private repo `LeonorsSweetCreations/functional-desserts-landing` created and pushed (2026-10-15)
 
 ## Phase 3: Vercel + Supabase cloud (only after Leonor approves again)
 
-- [ ] Leonor signs in with `npx vercel login`, project linked, first deploy
-- [ ] Env vars on Vercel: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `SYSTEME_API_KEY`, `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`
-- [ ] Domain `program.leonors.com` (chosen by Leonor on 2026-10-15) pointed at Vercel with a CNAME, then a redirect on Systeme.io from the old page to the new URL
+- [x] Vercel project `functional-desserts-landing` (team leonors) linked to the GitHub repo, first production deploy on 2026-10-16. Every push to `main` deploys
+- [x] Env vars on Vercel (production and preview): `NEXT_PUBLIC_SITE_URL=https://program.leonors.com`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `NEXT_PUBLIC_LEAD_CAPTURE=native`, `SYSTEME_API_KEY` (sensitive), `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`
+- [x] Domain `program.leonors.com` added to the Vercel project (2026-10-16)
+- [ ] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate
+- [ ] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main`
 - [ ] GTM and Meta Pixel IDs added
-- [ ] End-to-end test with a real email
+- [ ] End-to-end test of the free guide form in production with a real email (localhost test passed on 2026-10-15)
 
 ## Notes from implementation (2026-10-12)
 
