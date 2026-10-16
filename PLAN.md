@@ -127,8 +127,9 @@ NEXT_PUBLIC_META_PIXEL_ID=
 - [x] CNAME `program` added by Leonor on Cloudflare (2026-10-16), `https://program.leonors.com/functionaldessertsprogram-main` answers 200 with a valid certificate
 - [x] Domain `program.leonors.com` added to the Vercel project (2026-10-16)
 - [ ] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate
-- [ ] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main`
+- [x] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main` (2026-10-16: meta refresh plus a script that keeps query string and hash, in the head code of the old page, settings > tracking > header code; the old page itself was not deleted)
 - [ ] GTM and Meta Pixel IDs added
+- [x] End-to-end test of the waiting list form in production (2026-10-16, contact created in Systeme.io with the tag `FDP Waitlist`)
 - [ ] End-to-end test of the free guide form in production with a real email (localhost test passed on 2026-10-15)
 
 ## Notes from implementation (2026-10-12)

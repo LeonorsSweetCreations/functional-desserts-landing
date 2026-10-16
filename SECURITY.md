@@ -97,7 +97,8 @@ Nota de 15 e 16 de outubro de 2026: a página tem três formulários, lista de e
 - [x] Repositório privado no GitHub (2026-10-15)
 - [x] Verificado: `git log --all -- .env.local` vazio (2026-10-15)
 - [x] Cabeçalhos confirmados no deploy de produção de 2026-10-16: CSP, HSTS, nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy
-- [ ] Testar o formulário em produção com um email real e confirmar que chega ao Supabase e ao Systeme.io
+- [x] Testar o formulário da lista de espera em produção e confirmar que chega ao Systeme.io (2026-10-16)
+- [ ] Testar o formulário do guia grátis em produção com um email real
 - [ ] Rever este ficheiro sempre que se adicionar uma rota, tabela, integração ou variável
 
 ## O que não foi verificado
