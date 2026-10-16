@@ -89,7 +89,7 @@ Saídas:
 
 ## Checklist antes de publicar (fase 3)
 
-Nota de 15 de outubro de 2026: os formulários da página enviam cada contacto para o Systeme.io através de `/api/leads` (`LEAD_CAPTURE=native`, predefinição). O Supabase é opcional; sem ele a rota não guarda nada localmente em produção e fala só com a API do Systeme.io, com a chave `SYSTEME_API_KEY` apenas nas variáveis de ambiente da Vercel. Sem Supabase nem chave do Systeme.io, a rota responde 503. Com `NEXT_PUBLIC_LEAD_CAPTURE=systeme` a página não tem formulários e os botões levam às páginas do Systeme.io.
+Nota de 15 e 16 de outubro de 2026: os botões da lista de espera abrem a página do Systeme.io. O formulário do guia grátis envia o contacto para o Systeme.io através de `/api/leads` (`LEAD_CAPTURE=native`, predefinição). O Supabase é opcional; sem ele a rota não guarda nada localmente em produção e fala só com a API do Systeme.io, com a chave `SYSTEME_API_KEY` apenas nas variáveis de ambiente da Vercel. Sem Supabase nem chave do Systeme.io, a rota responde 503. Com `NEXT_PUBLIC_LEAD_CAPTURE=systeme` a página não tem formulários e os botões levam às páginas do Systeme.io.
 
 - [ ] Projecto Supabase criado, migração aplicada, RLS confirmada no painel
 - [ ] Teste com a chave anon: `select * from leads` devolve 0 linhas

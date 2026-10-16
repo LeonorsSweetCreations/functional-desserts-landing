@@ -119,15 +119,17 @@ export const ANALYTICS = {
 export const isOpen = LAUNCH_MODE === "open";
 
 /**
- * LEAD_CAPTURE (Leonor's decision on 2026-10-15)
- *   "native":  the forms on this page post to /api/leads, which creates the contact in
- *              Systeme.io with the right tag (and stores it in Supabase when configured). Default.
- *   "systeme": no form on this page; every waiting list and free guide button links to the
- *              pages that already exist on Systeme.io (LINKS.waitingListPage, LINKS.freeGuidePage).
+ * Waiting list (Leonor, 2026-10-16): every "Join the waiting list" button opens the
+ * sign-up page that already exists on Systeme.io. There is no waiting list form on this page.
+ */
+export const WAITLIST_HREF = LINKS.waitingListPage;
+
+/**
+ * LEAD_CAPTURE, free guide only (Leonor, 2026-10-15)
+ *   "native":  the free guide form on this page posts to /api/leads, which creates the
+ *              contact in Systeme.io with the right tag (Supabase optional). Default.
+ *   "systeme": no form; the free guide button links to the Systeme.io opt-in page.
  */
 export const LEAD_CAPTURE: "systeme" | "native" =
   process.env.NEXT_PUBLIC_LEAD_CAPTURE === "systeme" ? "systeme" : "native";
 export const usesNativeForms = LEAD_CAPTURE === "native";
-
-/** Where the primary call to action goes while doors are closed. */
-export const WAITLIST_HREF = usesNativeForms ? `#${ANCHORS.waitlist}` : LINKS.waitingListPage;

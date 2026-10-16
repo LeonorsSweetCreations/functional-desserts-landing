@@ -142,7 +142,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 ## Decisions of 2026-10-15
 
 - Price €299 one-time, plan 4 x €87.50 (total €350).
-- Email capture: the forms on this page send the contact to Systeme.io with a tag (`LEAD_CAPTURE=native`, default; Supabase optional, the route works with the Systeme.io API key alone). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps the forms for buttons linking to the Systeme.io waiting list and opt-in pages. Decided after a first version that only linked to those pages.
+- Waiting list: every button opens the Systeme.io page `https://healthy.leonors.com/waiting-list` (Leonor, 2026-10-16, after the on-page form was tried). Free guide: the form on this page sends the contact to Systeme.io with the tag "[EBOOK][REGISTO] Indulge in Wellness" (`LEAD_CAPTURE=native`, default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps that form for a link to the opt-in page.
 - Leonor approved phases 2 and 3 ("Segue com os passos necessários, para acrescentar esta página ao meu website").
 
 ## Open items (do not block)

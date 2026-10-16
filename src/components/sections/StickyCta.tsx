@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { sticky } from "@/content/copy";
 import { ANCHORS, LINKS, WAITLIST_HREF, isOpen } from "@/config/site";
 
-/** Mobile-only bar that appears after the hero scrolls out and hides near the pricing form. */
+/** Mobile-only bar that appears after the hero scrolls out and hides near the price card. */
 export function StickyCta() {
   const [visible, setVisible] = useState(false);
 

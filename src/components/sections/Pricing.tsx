@@ -2,10 +2,9 @@ import { Check, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { LeadForm } from "@/components/ui/LeadForm";
 import { Countdown } from "@/components/ui/Countdown";
-import { pricing, forms } from "@/content/copy";
-import { ANCHORS, LAUNCH_DATE, LINKS, isOpen, usesNativeForms } from "@/config/site";
+import { pricing } from "@/content/copy";
+import { ANCHORS, LAUNCH_DATE, LINKS, WAITLIST_HREF, isOpen } from "@/config/site";
 
 function formatLaunchDate(iso: string) {
   const d = new Date(iso);
@@ -80,19 +79,9 @@ export function Pricing() {
                 </p>
                 {LAUNCH_DATE ? <Countdown iso={LAUNCH_DATE} label="Doors open in" /> : null}
                 <div className="mt-5">
-                  {usesNativeForms ? (
-                    <LeadForm
-                      source="waitlist"
-                      idPrefix="waitlist"
-                      buttonLabel={forms.waitlistButton}
-                      successTitle={forms.waitlistSuccessTitle}
-                      successText={forms.waitlistSuccessText}
-                    />
-                  ) : (
-                    <Button href={LINKS.waitingListPage} size="lg" className="w-full">
-                      {pricing.ctaWaitlist}
-                    </Button>
-                  )}
+                  <Button href={WAITLIST_HREF} size="lg" className="w-full">
+                    {pricing.ctaWaitlist}
+                  </Button>
                 </div>
               </div>
             )}
