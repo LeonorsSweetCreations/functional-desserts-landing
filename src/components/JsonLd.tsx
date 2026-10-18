@@ -1,8 +1,8 @@
 import { about, faq, meta } from "@/content/copy";
-import { EFFECTIVE_PRICING, LINKS, PAGE_SLUG, PRICING, SITE_URL } from "@/config/site";
+import { LINKS, PAGE_SLUG, PRICING, SITE_URL, pricingFor, type LaunchState } from "@/config/site";
 
 /** Course + FAQPage structured data. Native script tag, as the Next.js JSON-LD guide recommends. */
-export function JsonLd() {
+export function JsonLd({ launch }: { launch: LaunchState }) {
   const pageUrl = `${SITE_URL}${PAGE_SLUG}`;
 
   const course = {
@@ -30,9 +30,9 @@ export function JsonLd() {
     },
     offers: {
       "@type": "Offer",
-      price: EFFECTIVE_PRICING.oneTime,
+      price: pricingFor(launch.launchPrice).oneTime,
       priceCurrency: PRICING.currency,
-      availability: "https://schema.org/PreOrder",
+      availability: launch.open ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
       url: pageUrl,
     },
   };
@@ -40,7 +40,7 @@ export function JsonLd() {
   const faqPage = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faq.items.map((item) => ({
+    mainEntity: faq.items(launch.launchPrice).map((item) => ({
       "@type": "Question",
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },

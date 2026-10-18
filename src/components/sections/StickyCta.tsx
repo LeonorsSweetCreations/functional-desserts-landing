@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { sticky } from "@/content/copy";
-import { ANCHORS, LINKS, WAITLIST_HREF, hasLaunchPrice, isOpen } from "@/config/site";
+import { sticky, priceStrings } from "@/content/copy";
+import { ANCHORS, WAITLIST_HREF, type LaunchState } from "@/config/site";
 
 /** Mobile-only bar that appears after the hero scrolls out and hides near the price card. */
-export function StickyCta() {
+export function StickyCta({ launch }: { launch: LaunchState }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -25,8 +25,10 @@ export function StickyCta() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const href = isOpen ? LINKS.checkout : WAITLIST_HREF;
-  const label = isOpen ? sticky.open : sticky.waitlist;
+  const href = launch.open ? launch.checkoutUrl : WAITLIST_HREF;
+  const label = launch.open ? sticky.open : sticky.waitlist;
+  const lp = launch.launchPrice;
+  const ps = priceStrings(lp);
 
   return (
     <div
@@ -35,17 +37,17 @@ export function StickyCta() {
     >
       <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
         <p className="text-xs leading-tight text-brand-muted">
-          {hasLaunchPrice ? (
+          {lp ? (
             <>
               <span className="block">
                 <span className="sr-only">{sticky.regularPriceLabel} </span>
-                <s className="decoration-brand-rose/80">{sticky.regularPrice}</s>{" "}
-                <span className="font-display text-base font-semibold text-brand-teal-dark">{sticky.launchPrice}</span>
+                <s className="decoration-brand-rose/80">{ps.regularOneTime}</s>{" "}
+                <span className="font-display text-base font-semibold text-brand-teal-dark">{ps.oneTime}</span>
               </span>
-              <span className="block">{sticky.planNote}</span>
+              <span className="block">{sticky.launchPlanNote(lp)}</span>
             </>
           ) : (
-            <span className="block font-semibold text-brand-ink">{sticky.priceNote}</span>
+            <span className="block font-semibold text-brand-ink">{sticky.priceNote(lp)}</span>
           )}
         </p>
         <a

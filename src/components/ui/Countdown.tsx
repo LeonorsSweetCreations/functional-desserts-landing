@@ -1,6 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 
 /** Ticks once a minute. Server snapshot is null so the static shell stays deterministic. */
 function subscribe(onChange: () => void) {
@@ -21,6 +22,15 @@ function parts(target: number, nowMs: number) {
 export function Countdown({ iso, label }: { iso: string; label: string }) {
   const target = new Date(iso).getTime();
   const minute = useSyncExternalStore(subscribe, getMinute, getServerMinute);
+  const router = useRouter();
+  const done = minute !== null && !Number.isNaN(target) && target - minute * 60_000 <= 0;
+
+  // The moment the countdown reaches zero, ask the server for the fresh page state so the CTAs
+  // switch to the cart without a reload. Runs once per mount; the server state is cached for
+  // 5 minutes, so the switch can take up to that long.
+  useEffect(() => {
+    if (done) router.refresh();
+  }, [done, router]);
 
   if (minute === null || Number.isNaN(target)) return null;
   const p = parts(target, minute * 60_000);

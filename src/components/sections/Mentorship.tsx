@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Cta } from "@/components/ui/Cta";
 import { mentorship, hero } from "@/content/copy";
-import { ANCHORS, IMAGES } from "@/config/site";
+import { ANCHORS, IMAGES, type LaunchState } from "@/config/site";
 
 const icons: Record<string, LucideIcon> = {
   video: Video,
@@ -15,7 +15,7 @@ const icons: Record<string, LucideIcon> = {
   send: Send,
 };
 
-export function Mentorship() {
+export function Mentorship({ launch }: { launch: LaunchState }) {
   return (
     <section id={ANCHORS.mentorship} className="relative scroll-mt-20 overflow-hidden bg-brand-teal-dark py-16 text-white sm:py-24">
       <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-brand-teal/40 blur-3xl" />
@@ -66,7 +66,7 @@ export function Mentorship() {
           </ol>
           <div className="mt-8 flex flex-col gap-4 border-t border-brand-linen pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-brand-muted">{mentorship.footnote}</p>
-            <Cta labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} size="md" />
+            <Cta launch={launch} labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} size="md" />
           </div>
         </div>
       </Container>

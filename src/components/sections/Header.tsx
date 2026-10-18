@@ -2,7 +2,7 @@ import { Container } from "@/components/ui/Container";
 import { Cta } from "@/components/ui/Cta";
 import { BrandLogo } from "@/components/BrandLogo";
 import { nav } from "@/content/copy";
-import { ANCHORS } from "@/config/site";
+import { ANCHORS, type LaunchState } from "@/config/site";
 
 const links = [
   { label: nav.program, href: `#${ANCHORS.course}` },
@@ -11,7 +11,7 @@ const links = [
   { label: nav.faq, href: `#${ANCHORS.faq}` },
 ];
 
-export function Header() {
+export function Header({ launch }: { launch: LaunchState }) {
   return (
     <header className="sticky top-0 z-40 border-b border-brand-linen/70 bg-brand-cream/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-4">
@@ -23,7 +23,7 @@ export function Header() {
             </a>
           ))}
         </nav>
-        <Cta labelOpen={nav.ctaOpen} labelWaitlist={nav.ctaWaitlist} size="md" withArrow={false} />
+        <Cta launch={launch} labelOpen={nav.ctaOpen} labelWaitlist={nav.ctaWaitlist} size="md" withArrow={false} />
       </Container>
     </header>
   );

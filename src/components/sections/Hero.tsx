@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/Button";
 import { LeadForm } from "@/components/ui/LeadForm";
 import { HeroMedia } from "./HeroMedia";
 import { hero, forms } from "@/content/copy";
-import { ANCHORS, isOpen, usesNativeForms } from "@/config/site";
+import { ANCHORS, usesNativeForms, type LaunchState } from "@/config/site";
 
-export function Hero() {
+export function Hero({ launch }: { launch: LaunchState }) {
   return (
     <section className="relative overflow-hidden">
       {/* Decorative shapes */}
@@ -27,7 +27,7 @@ export function Hero() {
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-muted">{hero.subheadline}</p>
 
-          {!isOpen && usesNativeForms ? (
+          {!launch.open && usesNativeForms ? (
             /* Waiting list form in the hero (Leonor, 2026-10-16, option B). Same API and tag as the price card form. */
             <div className="mt-8 max-w-xl rounded-3xl bg-white/90 p-5 shadow-card ring-1 ring-brand-linen backdrop-blur sm:p-6">
               <p className="font-display text-xl text-brand-ink">{forms.waitlistTitle}</p>
@@ -39,7 +39,7 @@ export function Hero() {
           ) : null}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            {isOpen || !usesNativeForms ? <Cta labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} /> : null}
+            {launch.open || !usesNativeForms ? <Cta launch={launch} labelOpen={hero.ctaOpen} labelWaitlist={hero.ctaWaitlist} /> : null}
             <Button href={`#${ANCHORS.course}`} variant="ghost" size="lg">
               {hero.secondaryCta}
             </Button>
@@ -56,7 +56,7 @@ export function Hero() {
             ))}
           </ul>
 
-          {!isOpen && !usesNativeForms ? <p className="mt-6 max-w-lg text-sm leading-relaxed text-brand-muted">{hero.waitlistNote}</p> : null}
+          {!launch.open && !usesNativeForms ? <p className="mt-6 max-w-lg text-sm leading-relaxed text-brand-muted">{hero.waitlistNote}</p> : null}
         </div>
 
         <HeroMedia />

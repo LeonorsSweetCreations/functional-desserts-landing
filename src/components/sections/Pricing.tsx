@@ -4,8 +4,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/ui/Countdown";
 import { LeadForm } from "@/components/ui/LeadForm";
-import { pricing, forms } from "@/content/copy";
-import { ANCHORS, LAUNCH_DATE, LINKS, hasLaunchPrice, isOpen, usesNativeForms } from "@/config/site";
+import { pricing, forms, priceStrings } from "@/content/copy";
+import { ANCHORS, LAUNCH_DATE, LINKS, usesNativeForms, type LaunchState } from "@/config/site";
 
 function formatLaunchDate(iso: string) {
   const d = new Date(iso);
@@ -13,8 +13,10 @@ function formatLaunchDate(iso: string) {
   return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
 }
 
-export function Pricing() {
+export function Pricing({ launch }: { launch: LaunchState }) {
   const launchDateText = LAUNCH_DATE ? formatLaunchDate(LAUNCH_DATE) : null;
+  const lp = launch.launchPrice;
+  const ps = priceStrings(lp);
 
   return (
     <section id={ANCHORS.pricing} className="scroll-mt-20 bg-white py-16 sm:py-24">
@@ -52,39 +54,39 @@ export function Pricing() {
           {/* Price card */}
           <div id={ANCHORS.waitlist} className="reveal scroll-mt-24 rounded-3xl bg-brand-teal-dark p-7 text-white shadow-card-lg sm:p-9">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{pricing.yourPriceLabel}</p>
-              {hasLaunchPrice ? (
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{lp ? pricing.yourLaunchPriceLabel : pricing.yourPriceLabel}</p>
+              {lp ? (
                 <span className="rounded-full bg-brand-pink px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-ink">{pricing.launchBadge}</span>
               ) : null}
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className={`rounded-2xl p-5 ring-1 ${hasLaunchPrice ? "bg-white/15 ring-brand-pink/70" : "bg-white/10 ring-white/15"}`}>
+              <div className={`rounded-2xl p-5 ring-1 ${lp ? "bg-white/15 ring-brand-pink/70" : "bg-white/10 ring-white/15"}`}>
                 <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.oneTime.label}</p>
-                {hasLaunchPrice ? (
+                {lp ? (
                   <p className="mt-2 text-base text-white/70">
                     <span className="sr-only">{pricing.regularPriceLabel} </span>
-                    <s className="decoration-brand-pink/80 decoration-2">{pricing.oneTime.regularPrice}</s>
+                    <s className="decoration-brand-pink/80 decoration-2">{ps.regularOneTime}</s>
                   </p>
                 ) : null}
-                <p className={`font-display text-4xl ${hasLaunchPrice ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{pricing.oneTime.price}</p>
+                <p className={`font-display text-4xl ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.oneTime}</p>
                 <p className="mt-1 text-xs text-white/75">{pricing.oneTime.note}</p>
               </div>
               <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
                 <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.plan.label}</p>
-                {hasLaunchPrice ? (
+                {lp ? (
                   <p className="mt-2 text-sm text-white/70">
                     <span className="sr-only">{pricing.regularPriceLabel} </span>
-                    <s className="decoration-brand-pink/80 decoration-2">{pricing.plan.regularPrice}</s>
+                    <s className="decoration-brand-pink/80 decoration-2">{ps.regularPlan}</s>
                   </p>
                 ) : null}
-                <p className={`font-display text-3xl leading-tight ${hasLaunchPrice ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{pricing.plan.price}</p>
-                <p className="mt-1 text-xs text-white/75">{pricing.plan.note}</p>
+                <p className={`font-display text-3xl leading-tight ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.plan}</p>
+                <p className="mt-1 text-xs text-white/75">{ps.planNote}</p>
               </div>
             </div>
 
-            {isOpen ? (
+            {launch.open ? (
               <div className="mt-7">
-                <Button href={LINKS.checkout} size="lg" className="w-full">
+                <Button href={launch.checkoutUrl} size="lg" className="w-full">
                   {pricing.ctaOpen}
                 </Button>
                 <p className="mt-3 text-center text-xs text-white/70">{pricing.secure}</p>

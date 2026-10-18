@@ -117,3 +117,9 @@ Nota de 15 e 16 de outubro de 2026: a página tem três formulários, lista de e
 - Nova variável pública `NEXT_PUBLIC_LAUNCH_PRICE`, lida em `src/config/site.ts`. É um valor de configuração do operador, não input de utilizador, mas mesmo assim é validada: só aceita dígitos com até duas casas decimais, tem de ser maior que zero e menor que o preço normal; qualquer outro valor é ignorado e a página mostra €299. O número validado entra no texto (escapado pelo React) e no JSON-LD como número, não como string vinda do ambiente.
 - Sem novos pontos de entrada, tabelas, integrações ou segredos. O valor é público por desenho (aparece na página).
 - Verificado: `pnpm lint`, `pnpm build` com e sem a variável, grep de travessões nos ficheiros alterados.
+
+## Adenda de 18 de outubro de 2026 (abertura automática)
+
+- Novas variáveis públicas: `NEXT_PUBLIC_LAUNCH_PRICE_UNTIL` (data ISO, ignorada se inválida) e `NEXT_PUBLIC_CHECKOUT_LAUNCH_URL` (só aceita `https` nos hosts `healthy.leonors.com` ou `leonors.com`; qualquer outro valor cai no carrinho normal, verificado com um build de teste com um host estranho). `NEXT_PUBLIC_LAUNCH_MODE` ganha o valor `auto`.
+- `src/lib/launch.ts` lê o relógio dentro de uma função `use cache` com `cacheLife` de 5 minutos, a única leitura de hora no servidor. O resultado (três valores booleanos/URL) passa aos componentes por props. Sem novos pontos de entrada, tabelas, integrações ou segredos. O `router.refresh()` no fim da contagem decrescente só pede o estado ao servidor, sem dados do utilizador.
+- Verificado: `pnpm lint`, `tsc`, quatro builds de produção com estados diferentes, grep de travessões.

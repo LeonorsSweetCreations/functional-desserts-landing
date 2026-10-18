@@ -19,36 +19,38 @@ import { CookieBanner } from "@/components/CookieBanner";
 import { Analytics } from "@/components/Analytics";
 import { JsonLd } from "@/components/JsonLd";
 import { RevealObserver } from "@/components/ui/Reveal";
+import { getLaunchState } from "@/lib/launch";
 
-export default function ProgramPage() {
+export default async function ProgramPage() {
+  const launch = await getLaunchState();
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-brand-teal-dark">
         Skip to content
       </a>
-      <Header />
+      <Header launch={launch} />
       <main id="main" className="flex-1">
-        <Hero />
+        <Hero launch={launch} />
         <Pains />
         <Transformation />
         <ForWho />
         <Modules />
-        <Mentorship />
+        <Mentorship launch={launch} />
         <Bonuses />
         <Suspense fallback={null}>
           <Testimonials />
         </Suspense>
         <About />
-        <Pricing />
-        <Faq />
+        <Pricing launch={launch} />
+        <Faq launch={launch} />
         <LeadMagnet />
-        <FinalCta />
+        <FinalCta launch={launch} />
       </main>
       <Footer />
-      <StickyCta />
+      <StickyCta launch={launch} />
       <CookieBanner />
       <Analytics />
-      <JsonLd />
+      <JsonLd launch={launch} />
       <RevealObserver />
     </>
   );

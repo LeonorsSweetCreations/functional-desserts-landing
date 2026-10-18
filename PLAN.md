@@ -15,7 +15,7 @@ Problems with the current page that this project fixes: 370 to 456 KB of HTML wi
 | Scope | One page, dedicated to the program |
 | Primary goal | Purchase of the program |
 | Status | Closed now, launch in 1 to 3 months |
-| Pre-launch behaviour | Full sales page, primary CTA "Join the waiting list"; at launch flip `LAUNCH_MODE` to `open` and CTAs point to the cart |
+| Pre-launch behaviour | Full sales page, primary CTA "Join the waiting list". Since 2026-10-18 the page opens by itself at `NEXT_PUBLIC_LAUNCH_DATE` (`NEXT_PUBLIC_LAUNCH_MODE=auto`); `open` and `waitlist` still force a state |
 | Language | English only |
 | Checkout | Existing Systeme.io cart (`healthy.leonors.com/functionaldessertsprogram-cart`) |
 | Leads | Supabase + Systeme.io API (contact + tag) |
@@ -77,6 +77,8 @@ NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_LAUNCH_MODE=
 NEXT_PUBLIC_LAUNCH_DATE=
 NEXT_PUBLIC_LAUNCH_PRICE=
+NEXT_PUBLIC_LAUNCH_PRICE_UNTIL=
+NEXT_PUBLIC_CHECKOUT_LAUNCH_URL=
 NEXT_PUBLIC_LEAD_CAPTURE=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -140,9 +142,9 @@ NEXT_PUBLIC_META_PIXEL_ID=
 
 - [x] Launch price mechanism (2026-10-18): `NEXT_PUBLIC_LAUNCH_PRICE` (e.g. `199`) shows €299 struck through and the launch price highlighted on the price card and on the sticky bar; the FAQ answer and the JSON-LD offer use it too. The payment plan keeps the regular markup (350 / 299), its total is rounded to whole euros and divided by 4: with 199 the plan is 4 x €58.25, total €233. Unset, empty, malformed, zero or not lower than €299: the page shows €299 and 4 x €87.50 as before. Checked with `pnpm build` in both states and a headless Chrome render at 412 and 1280 px
 - [x] Countdown confirmed in waitlist mode with `NEXT_PUBLIC_LAUNCH_DATE` set (2026-10-18): the price card shows "Doors open on 1 December 2026" and, after hydration, "Doors open in" with days, hours and minutes, ticking once a minute. The static HTML carries no countdown (client only, by design, see the notes of 2026-10-12). Unset: no countdown, text "Enrolment opens soon"
-- [ ] Leonor decides the launch price and the launch date; set `NEXT_PUBLIC_LAUNCH_PRICE` and `NEXT_PUBLIC_LAUNCH_DATE` on Vercel (production) and redeploy
-- [ ] On launch day: `NEXT_PUBLIC_LAUNCH_MODE=open` on Vercel and redeploy; every CTA then points to the Systeme.io cart. The cart price lives in Systeme.io, so confirm the cart charges the same launch price and plan as the page shows
-- [ ] When the launch offer ends: remove `NEXT_PUBLIC_LAUNCH_PRICE` on Vercel and redeploy; the page goes back to €299 and 4 x €87.50
+- [x] Automatic switch (Leonor, 2026-10-18, option 1): `NEXT_PUBLIC_LAUNCH_MODE=auto` opens the doors at `NEXT_PUBLIC_LAUNCH_DATE`, `NEXT_PUBLIC_LAUNCH_PRICE_UNTIL` ends the launch offer, `NEXT_PUBLIC_CHECKOUT_LAUNCH_URL` is the cart linked while the offer runs. Decided on the server by `src/lib/launch.ts` (`use cache`, 5-minute `cacheLife`), so the page flips within 5 minutes of each date with no redeploy; the countdown asks for a refresh when it hits zero. The page stays static (revalidate 5 min instead of 1 h). Verified with four builds: auto without date (closed, €299), auto past date with price and launch cart (open, €199 struck €299, launch cart, JSON-LD InStock), same with the offer ended (open, €299, regular cart), waitlist forced with a bad cart URL (closed, regular cart). Vercel env `NEXT_PUBLIC_LAUNCH_MODE` changed from `waitlist` to `auto` on 2026-10-18 (same behaviour until a date is set)
+- [ ] Leonor decides the launch date, the launch price and when the offer ends; set `NEXT_PUBLIC_LAUNCH_DATE`, `NEXT_PUBLIC_LAUNCH_PRICE` and `NEXT_PUBLIC_LAUNCH_PRICE_UNTIL` on Vercel (production) and redeploy once. From then on everything switches by itself
+- [ ] Second Systeme.io cart with the launch prices, URL in `NEXT_PUBLIC_CHECKOUT_LAUNCH_URL`. Found on 2026-10-18: the existing cart `functionaldessertsprogram-cart` still has the price plans "Full Payment (launch offer)" €199 and "Payment Plan (launch offer)" €62.50, the prices from before 2026-10-15, so today it does not charge €299 / 4 x €87.50. Leonor decides which prices each cart gets before any plan is changed
 
 ## Notes from implementation (2026-10-12)
 
@@ -163,6 +165,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 
 ## Decisions of 2026-10-18
 
+- Automatic launch (option 1, chosen by Leonor): the page follows the dates on the server, with a 5-minute cache; no cron, no Vercel API token, no feature flag service. Manual overrides stay (`open`, `waitlist`).
 - Launch price: a single public env var, `NEXT_PUBLIC_LAUNCH_PRICE`, no code change at launch. The regular price stays the source of truth in `src/config/site.ts` (`PRICING`); the page reads `EFFECTIVE_PRICING`. Plan formula: total = round(launch price x 350 / 299), installment = total / 4, so the markup of the regular plan is kept and the total always divides exactly by 4.
 - The CNAME `program` on Cloudflare is done (2026-10-16); the duplicate open item in phase 3 is now ticked.
 

@@ -2,9 +2,9 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Cta } from "@/components/ui/Cta";
 import { finalCta } from "@/content/copy";
-import { IMAGES } from "@/config/site";
+import { IMAGES, type LaunchState } from "@/config/site";
 
-export function FinalCta() {
+export function FinalCta({ launch }: { launch: LaunchState }) {
   return (
     <section className="relative overflow-hidden py-24 text-white sm:py-32">
       <Image src={IMAGES.finalCta} alt={finalCta.imageAlt} fill sizes="100vw" className="object-cover" />
@@ -13,7 +13,7 @@ export function FinalCta() {
         <h2 className="text-3xl leading-tight sm:text-4xl lg:text-5xl">{finalCta.title}</h2>
         <p className="mt-5 text-lg leading-relaxed text-white/85">{finalCta.text}</p>
         <div className="mt-9">
-          <Cta labelOpen={finalCta.ctaOpen} labelWaitlist={finalCta.ctaWaitlist} />
+          <Cta launch={launch} labelOpen={finalCta.ctaOpen} labelWaitlist={finalCta.ctaWaitlist} />
         </div>
       </Container>
     </section>

@@ -34,7 +34,9 @@ pnpm build && pnpm start   # production build on http://localhost:3000
 
 ## Switching from waiting list to open doors
 
-Set `NEXT_PUBLIC_LAUNCH_MODE=open` in `.env.local` (or on Vercel) and redeploy. Every call to action then points to the Systeme.io cart. Set `NEXT_PUBLIC_LAUNCH_DATE` to an ISO date to show the countdown while in waiting list mode. Set `NEXT_PUBLIC_LAUNCH_PRICE` (e.g. `199`) to show €299 struck through and the launch price highlighted, with the payment plan recomputed at the same markup (199 gives 4 x €58.25, total €233); remove it to go back to €299.
+The page switches by itself. With `NEXT_PUBLIC_LAUNCH_MODE=auto` (the default) doors are closed until `NEXT_PUBLIC_LAUNCH_DATE` and open from that moment on, with every call to action pointing to the Systeme.io cart; the state is recomputed on the server every 5 minutes, so no redeploy is needed. `waitlist` and `open` force a state whatever the date. `NEXT_PUBLIC_LAUNCH_DATE` also drives the countdown while closed.
+
+Launch offer: `NEXT_PUBLIC_LAUNCH_PRICE` (e.g. `199`) shows €299 struck through and the launch price highlighted, with the payment plan recomputed at the same markup (199 gives 4 x €58.25, total €233). `NEXT_PUBLIC_LAUNCH_PRICE_UNTIL` ends the offer at that moment, and `NEXT_PUBLIC_CHECKOUT_LAUNCH_URL` is the cart with the launch prices that the buttons link to while the offer runs. All of these are read in `src/config/site.ts`; the time-based decision lives in `src/lib/launch.ts`.
 
 ## Where the buttons go
 

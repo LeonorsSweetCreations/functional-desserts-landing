@@ -2,21 +2,35 @@
  * Single place for every editable setting that is not copy.
  * Copy lives in src/content/copy.ts.
  *
- * LAUNCH_MODE
- *   "waitlist": doors closed, every primary CTA opens the waiting list form.
- *   "open":     doors open, every primary CTA links to CHECKOUT_URL.
- * Both can be overridden without a code change through environment variables.
+ * NEXT_PUBLIC_LAUNCH_MODE (Leonor, 2026-10-18: the page switches by itself)
+ *   "auto" (default): doors closed until NEXT_PUBLIC_LAUNCH_DATE, open from that moment on.
+ *   "waitlist":       doors closed, whatever the date. Every primary CTA opens the waiting list form.
+ *   "open":           doors open, whatever the date. Every primary CTA links to the cart.
+ * The time-based decision is made in src/lib/launch.ts (cached, refreshed every 5 minutes), so
+ * the page flips a few minutes after the date without a redeploy. Components receive the result
+ * as a `launch` prop; nothing reads the clock at module level (Cache Components rule).
  */
 
 export type LaunchMode = "waitlist" | "open";
+export type LaunchModeSetting = LaunchMode | "auto";
 
-const envMode = process.env.NEXT_PUBLIC_LAUNCH_MODE;
-export const LAUNCH_MODE: LaunchMode =
-  envMode === "open" || envMode === "waitlist" ? envMode : "waitlist";
+const envMode = process.env.NEXT_PUBLIC_LAUNCH_MODE?.trim();
+export const LAUNCH_MODE_SETTING: LaunchModeSetting =
+  envMode === "open" || envMode === "waitlist" ? envMode : "auto";
 
-/** ISO date (e.g. "2026-12-01T09:00:00Z"). Leave empty until Leonor confirms. */
-export const LAUNCH_DATE: string | null =
-  process.env.NEXT_PUBLIC_LAUNCH_DATE?.trim() || null;
+/** ISO date with time zone (e.g. "2026-12-01T09:00:00Z"). Malformed values are ignored. */
+function parseIsoDate(raw: string | undefined): { iso: string; ms: number } | null {
+  const iso = raw?.trim() || "";
+  if (!iso) return null;
+  const ms = Date.parse(iso);
+  return Number.isNaN(ms) ? null : { iso, ms };
+}
+const launchDate = parseIsoDate(process.env.NEXT_PUBLIC_LAUNCH_DATE);
+/** Doors open at this moment in "auto" mode; also drives the countdown while closed. */
+export const LAUNCH_DATE: string | null = launchDate?.iso ?? null;
+export const LAUNCH_DATE_MS: number | null = launchDate?.ms ?? null;
+/** Optional end of the launch offer. From this moment the regular prices show again. */
+export const LAUNCH_PRICE_UNTIL_MS: number | null = parseIsoDate(process.env.NEXT_PUBLIC_LAUNCH_PRICE_UNTIL)?.ms ?? null;
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "http://localhost:3000";
@@ -50,7 +64,6 @@ function parseLaunchPrice(raw: string | undefined, regular: number): number | nu
   return Number.isFinite(n) && n > 0 && n < regular ? n : null;
 }
 export const LAUNCH_PRICE: number | null = parseLaunchPrice(process.env.NEXT_PUBLIC_LAUNCH_PRICE, PRICING.oneTime);
-export const hasLaunchPrice = LAUNCH_PRICE !== null;
 
 function planFor(oneTime: number) {
   const { installments, total: regularTotal } = PRICING.plan;
@@ -58,11 +71,13 @@ function planFor(oneTime: number) {
   return { installments, amount: total / installments, total };
 }
 
-/** The prices the page actually shows: the launch price when set, otherwise the regular ones. */
-export const EFFECTIVE_PRICING = {
-  oneTime: LAUNCH_PRICE ?? PRICING.oneTime,
-  plan: LAUNCH_PRICE === null ? PRICING.plan : planFor(LAUNCH_PRICE),
-} as const;
+/** Launch prices, or null when NEXT_PUBLIC_LAUNCH_PRICE is not set. */
+export const LAUNCH_PRICING = LAUNCH_PRICE === null ? null : { oneTime: LAUNCH_PRICE, plan: planFor(LAUNCH_PRICE) };
+
+/** The prices the page shows for a given state: launch prices while the offer is active, otherwise regular. */
+export function pricingFor(launchPrice: boolean): { oneTime: number; plan: { installments: number; amount: number; total: number } } {
+  return launchPrice && LAUNCH_PRICING ? LAUNCH_PRICING : { oneTime: PRICING.oneTime, plan: PRICING.plan };
+}
 
 /** "€299", "€87.50". Whole euros without decimals, anything else with two. */
 export function formatEur(n: number): string {
@@ -71,6 +86,16 @@ export function formatEur(n: number): string {
 /** Installments always carry two decimals ("€87.50"), as on the current page. */
 export function formatInstallment(n: number): string {
   return `€${n.toFixed(2)}`;
+}
+
+function safeCheckoutUrl(raw: string | undefined): string | null {
+  try {
+    const u = new URL(raw?.trim() || "");
+    if (u.protocol !== "https:" || !["healthy.leonors.com", "leonors.com"].includes(u.hostname)) return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
 }
 
 /** Every outbound URL, kept identical to the links already published. */
@@ -87,6 +112,11 @@ export const LINKS = {
   disclaimer: "https://leonors.com/disclaimer/",
   terms: "https://leonors.com/terms-and-conditions/",
   supportEmail: "support@leonors.com",
+  /**
+   * Second cart with the launch prices (Leonor, 2026-10-18). Only https URLs on Leonor's own
+   * hosts are accepted; anything else falls back to the regular cart.
+   */
+  checkoutLaunch: safeCheckoutUrl(process.env.NEXT_PUBLIC_CHECKOUT_LAUNCH_URL),
   social: {
     facebook: "https://www.facebook.com/LeonorsSweetCreations",
     instagram: "https://www.instagram.com/leonorssweetcreations/",
@@ -154,7 +184,26 @@ export const ANALYTICS = {
   metaPixelId: safeId(process.env.NEXT_PUBLIC_META_PIXEL_ID, /^[0-9]{6,20}$/),
 } as const;
 
-export const isOpen = LAUNCH_MODE === "open";
+/** What the page shows right now. Computed once per cache window in src/lib/launch.ts. */
+export type LaunchState = {
+  /** Doors open: CTAs go to the cart instead of the waiting list form. */
+  open: boolean;
+  /** Launch offer active: regular prices struck through, launch prices highlighted. */
+  launchPrice: boolean;
+  /** Cart the CTAs link to while open (launch cart during the offer when configured). */
+  checkoutUrl: string;
+};
+
+/** Pure function of the clock, so it can be unit-checked and reused on the client. */
+export function resolveLaunchState(nowMs: number): LaunchState {
+  const open =
+    LAUNCH_MODE_SETTING === "open" ? true
+    : LAUNCH_MODE_SETTING === "waitlist" ? false
+    : LAUNCH_DATE_MS !== null && nowMs >= LAUNCH_DATE_MS;
+  const launchPrice = LAUNCH_PRICING !== null && (LAUNCH_PRICE_UNTIL_MS === null || nowMs < LAUNCH_PRICE_UNTIL_MS);
+  const checkoutUrl = launchPrice && LINKS.checkoutLaunch ? LINKS.checkoutLaunch : LINKS.checkout;
+  return { open, launchPrice, checkoutUrl };
+}
 
 /**
  * LEAD_CAPTURE (Leonor, 2026-10-16: option B, forms on this page)

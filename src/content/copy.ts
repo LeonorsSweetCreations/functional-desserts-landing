@@ -6,17 +6,26 @@
  * states an outcome for the student, British spelling.
  */
 
-import { EFFECTIVE_PRICING, LINKS, PRICING, formatEur, formatInstallment, hasLaunchPrice } from "@/config/site";
+import { LINKS, PRICING, formatEur, formatInstallment, pricingFor } from "@/config/site";
 
-/** Strings for the prices actually shown (launch price when NEXT_PUBLIC_LAUNCH_PRICE is set). */
-const price = {
-  oneTime: formatEur(EFFECTIVE_PRICING.oneTime),
-  plan: `${EFFECTIVE_PRICING.plan.installments} x ${formatInstallment(EFFECTIVE_PRICING.plan.amount)}`,
-  planTotal: formatEur(EFFECTIVE_PRICING.plan.total),
-  regularOneTime: formatEur(PRICING.oneTime),
-  regularPlan: `${PRICING.plan.installments} x ${formatInstallment(PRICING.plan.amount)}`,
-  regularPlanTotal: formatEur(PRICING.plan.total),
-} as const;
+/**
+ * Price strings for the current state. `launchPrice` comes from the launch state resolved on the
+ * server (src/lib/launch.ts): launch prices while the offer is active, otherwise the regular ones.
+ */
+export function priceStrings(launchPrice: boolean) {
+  const p = pricingFor(launchPrice);
+  return {
+    oneTime: formatEur(p.oneTime),
+    plan: `${p.plan.installments} x ${formatInstallment(p.plan.amount)}`,
+    planTotal: formatEur(p.plan.total),
+    planNote: `Total ${formatEur(p.plan.total)}, one payment a month.`,
+    installments: p.plan.installments,
+    installment: formatInstallment(p.plan.amount),
+    regularOneTime: formatEur(PRICING.oneTime),
+    regularPlan: `${PRICING.plan.installments} x ${formatInstallment(PRICING.plan.amount)}`,
+    regularPlanTotal: formatEur(PRICING.plan.total),
+  };
+}
 
 export const meta = {
   title: "The Functional Desserts Program | Healthy desserts with a year of live mentorship",
@@ -351,20 +360,16 @@ export const pricing = {
   totalValueLabel: "Value of the content and bonuses",
   totalValue: `€${PRICING.totalValueBeforeMentorship}`,
   totalValueNote: "plus a full year of mentorship",
-  yourPriceLabel: hasLaunchPrice ? "Your launch price" : "Your price",
+  yourPriceLabel: "Your price",
+  yourLaunchPriceLabel: "Your launch price",
   launchBadge: "Launch price",
   regularPriceLabel: "Regular price",
   oneTime: {
     label: "One payment",
-    price: price.oneTime,
-    regularPrice: price.regularOneTime,
     note: "Pay once, get everything today.",
   },
   plan: {
     label: "Payment plan",
-    price: price.plan,
-    regularPrice: price.regularPlan,
-    note: `Total ${price.planTotal}, one payment a month.`,
   },
   ctaOpen: "Join the program",
   ctaWaitlist: "Join the waiting list",
@@ -377,9 +382,12 @@ export const pricing = {
   secure: "Secure checkout. Prices in euros, VAT included where applicable.",
 } as const;
 
+/** `items` is a function because the payment plan answer depends on the launch state. */
 export const faq = {
   title: "Questions you may still have",
-  items: [
+  items: (launchPrice: boolean) => {
+    const p = priceStrings(launchPrice);
+    return [
     {
       q: "Do these desserts actually taste good?",
       a: "Yes. Every recipe in the program was tested on people who eat traditional desserts, including Leonor's own family. You learn how to adjust sweetness, texture and flavour until the result tastes the way you expect a dessert to taste.",
@@ -422,15 +430,16 @@ export const faq = {
     },
     {
       q: "How does the payment plan work?",
-      a: hasLaunchPrice
-        ? `At the launch price you pay ${price.oneTime} once, or ${EFFECTIVE_PRICING.plan.installments} monthly payments of ${formatInstallment(EFFECTIVE_PRICING.plan.amount)} (total ${price.planTotal}). The regular price is ${price.regularOneTime}, or ${price.regularPlan} (total ${price.regularPlanTotal}). You get full access from the first payment.`
-        : `You can pay ${price.oneTime} once, or ${EFFECTIVE_PRICING.plan.installments} monthly payments of ${formatInstallment(EFFECTIVE_PRICING.plan.amount)} (total ${price.planTotal}). You get full access from the first payment.`,
+      a: launchPrice
+        ? `At the launch price you pay ${p.oneTime} once, or ${p.installments} monthly payments of ${p.installment} (total ${p.planTotal}). The regular price is ${p.regularOneTime}, or ${p.regularPlan} (total ${p.regularPlanTotal}). You get full access from the first payment.`
+        : `You can pay ${p.oneTime} once, or ${p.installments} monthly payments of ${p.installment} (total ${p.planTotal}). You get full access from the first payment.`,
     },
     {
       q: "What if it is not for me?",
       a: `You have ${PRICING.guaranteeDays} days to try the program. If it is not what you need, write to ${LINKS.supportEmail} and you get a full refund. No forms, no questions.`,
     },
-  ],
+  ];
+  },
 } as const;
 
 export const leadMagnet = {
@@ -475,13 +484,17 @@ export const forms = {
 export const sticky = {
   waitlist: "Join the waiting list",
   open: "Join the program",
-  /** Regular one-time price, struck through when a launch price is active. */
-  regularPrice: price.regularOneTime,
   regularPriceLabel: "Regular price",
-  /** Launch price, highlighted when active. */
-  launchPrice: price.oneTime,
-  priceNote: `${price.oneTime} or ${price.plan}`,
-  planNote: `or ${price.plan}, total ${price.planTotal}`,
+  /** "€299 or 4 x €87.50" (regular) or, with the launch price active, the launch values. */
+  priceNote: (launchPrice: boolean) => {
+    const p = priceStrings(launchPrice);
+    return `${p.oneTime} or ${p.plan}`;
+  },
+  /** Second line under the highlighted launch price. */
+  launchPlanNote: (launchPrice: boolean) => {
+    const p = priceStrings(launchPrice);
+    return `or ${p.plan}, total ${p.planTotal}`;
+  },
 } as const;
 
 export const cookies = {
