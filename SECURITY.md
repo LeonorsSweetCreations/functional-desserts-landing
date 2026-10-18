@@ -111,3 +111,9 @@ Nota de 15 e 16 de outubro de 2026: a página tem três formulários, lista de e
 - `src/app/layout.tsx` passou a ter um script inline de uma linha, com conteúdo constante (`document.documentElement.classList.add('js')`), sem dados de utilizador. Está coberto pelo `'unsafe-inline'` já existente na CSP. Verificado: não há interpolação de variáveis nesse script.
 - `next.config.ts`: a CSP inclui `'unsafe-eval'` apenas quando `NODE_ENV` é `development`, porque o React em modo dev precisa dele. Verificado por leitura do código que em produção a directiva fica igual à anterior. Fica por confirmar em `pnpm build && pnpm start` que o cabeçalho enviado não contém `'unsafe-eval'`.
 - Novas imagens em `public/images/` são ficheiros estáticos locais servidos por `next/image`; nenhuma vem de input do utilizador. Sem novos pontos de entrada, tabelas ou integrações.
+
+## Adenda de 18 de outubro de 2026 (preço de lançamento)
+
+- Nova variável pública `NEXT_PUBLIC_LAUNCH_PRICE`, lida em `src/config/site.ts`. É um valor de configuração do operador, não input de utilizador, mas mesmo assim é validada: só aceita dígitos com até duas casas decimais, tem de ser maior que zero e menor que o preço normal; qualquer outro valor é ignorado e a página mostra €299. O número validado entra no texto (escapado pelo React) e no JSON-LD como número, não como string vinda do ambiente.
+- Sem novos pontos de entrada, tabelas, integrações ou segredos. O valor é público por desenho (aparece na página).
+- Verificado: `pnpm lint`, `pnpm build` com e sem a variável, grep de travessões nos ficheiros alterados.

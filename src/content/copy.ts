@@ -6,7 +6,17 @@
  * states an outcome for the student, British spelling.
  */
 
-import { LINKS, PRICING } from "@/config/site";
+import { EFFECTIVE_PRICING, LINKS, PRICING, formatEur, formatInstallment, hasLaunchPrice } from "@/config/site";
+
+/** Strings for the prices actually shown (launch price when NEXT_PUBLIC_LAUNCH_PRICE is set). */
+const price = {
+  oneTime: formatEur(EFFECTIVE_PRICING.oneTime),
+  plan: `${EFFECTIVE_PRICING.plan.installments} x ${formatInstallment(EFFECTIVE_PRICING.plan.amount)}`,
+  planTotal: formatEur(EFFECTIVE_PRICING.plan.total),
+  regularOneTime: formatEur(PRICING.oneTime),
+  regularPlan: `${PRICING.plan.installments} x ${formatInstallment(PRICING.plan.amount)}`,
+  regularPlanTotal: formatEur(PRICING.plan.total),
+} as const;
 
 export const meta = {
   title: "The Functional Desserts Program | Healthy desserts with a year of live mentorship",
@@ -341,16 +351,20 @@ export const pricing = {
   totalValueLabel: "Value of the content and bonuses",
   totalValue: `€${PRICING.totalValueBeforeMentorship}`,
   totalValueNote: "plus a full year of mentorship",
-  yourPriceLabel: "Your price",
+  yourPriceLabel: hasLaunchPrice ? "Your launch price" : "Your price",
+  launchBadge: "Launch price",
+  regularPriceLabel: "Regular price",
   oneTime: {
     label: "One payment",
-    price: `€${PRICING.oneTime}`,
+    price: price.oneTime,
+    regularPrice: price.regularOneTime,
     note: "Pay once, get everything today.",
   },
   plan: {
     label: "Payment plan",
-    price: `${PRICING.plan.installments} x €${PRICING.plan.amount.toFixed(2)}`,
-    note: `Total €${PRICING.plan.total}, one payment a month.`,
+    price: price.plan,
+    regularPrice: price.regularPlan,
+    note: `Total ${price.planTotal}, one payment a month.`,
   },
   ctaOpen: "Join the program",
   ctaWaitlist: "Join the waiting list",
@@ -408,7 +422,9 @@ export const faq = {
     },
     {
       q: "How does the payment plan work?",
-      a: `You can pay €${PRICING.oneTime} once, or ${PRICING.plan.installments} monthly payments of €${PRICING.plan.amount.toFixed(2)} (total €${PRICING.plan.total}). You get full access from the first payment.`,
+      a: hasLaunchPrice
+        ? `At the launch price you pay ${price.oneTime} once, or ${EFFECTIVE_PRICING.plan.installments} monthly payments of ${formatInstallment(EFFECTIVE_PRICING.plan.amount)} (total ${price.planTotal}). The regular price is ${price.regularOneTime}, or ${price.regularPlan} (total ${price.regularPlanTotal}). You get full access from the first payment.`
+        : `You can pay ${price.oneTime} once, or ${EFFECTIVE_PRICING.plan.installments} monthly payments of ${formatInstallment(EFFECTIVE_PRICING.plan.amount)} (total ${price.planTotal}). You get full access from the first payment.`,
     },
     {
       q: "What if it is not for me?",
@@ -459,7 +475,13 @@ export const forms = {
 export const sticky = {
   waitlist: "Join the waiting list",
   open: "Join the program",
-  priceNote: `€${PRICING.oneTime} or ${PRICING.plan.installments} x €${PRICING.plan.amount.toFixed(2)}`,
+  /** Regular one-time price, struck through when a launch price is active. */
+  regularPrice: price.regularOneTime,
+  regularPriceLabel: "Regular price",
+  /** Launch price, highlighted when active. */
+  launchPrice: price.oneTime,
+  priceNote: `${price.oneTime} or ${price.plan}`,
+  planNote: `or ${price.plan}, total ${price.planTotal}`,
 } as const;
 
 export const cookies = {

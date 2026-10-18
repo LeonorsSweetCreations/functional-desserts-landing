@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { sticky } from "@/content/copy";
-import { ANCHORS, LINKS, WAITLIST_HREF, isOpen } from "@/config/site";
+import { ANCHORS, LINKS, WAITLIST_HREF, hasLaunchPrice, isOpen } from "@/config/site";
 
 /** Mobile-only bar that appears after the hero scrolls out and hides near the price card. */
 export function StickyCta() {
@@ -35,7 +35,18 @@ export function StickyCta() {
     >
       <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
         <p className="text-xs leading-tight text-brand-muted">
-          <span className="block font-semibold text-brand-ink">{sticky.priceNote}</span>
+          {hasLaunchPrice ? (
+            <>
+              <span className="block">
+                <span className="sr-only">{sticky.regularPriceLabel} </span>
+                <s className="decoration-brand-rose/80">{sticky.regularPrice}</s>{" "}
+                <span className="font-display text-base font-semibold text-brand-teal-dark">{sticky.launchPrice}</span>
+              </span>
+              <span className="block">{sticky.planNote}</span>
+            </>
+          ) : (
+            <span className="block font-semibold text-brand-ink">{sticky.priceNote}</span>
+          )}
         </p>
         <a
           href={href}

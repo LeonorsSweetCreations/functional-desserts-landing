@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Countdown } from "@/components/ui/Countdown";
 import { LeadForm } from "@/components/ui/LeadForm";
 import { pricing, forms } from "@/content/copy";
-import { ANCHORS, LAUNCH_DATE, LINKS, isOpen, usesNativeForms } from "@/config/site";
+import { ANCHORS, LAUNCH_DATE, LINKS, hasLaunchPrice, isOpen, usesNativeForms } from "@/config/site";
 
 function formatLaunchDate(iso: string) {
   const d = new Date(iso);
@@ -51,16 +51,33 @@ export function Pricing() {
 
           {/* Price card */}
           <div id={ANCHORS.waitlist} className="reveal scroll-mt-24 rounded-3xl bg-brand-teal-dark p-7 text-white shadow-card-lg sm:p-9">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{pricing.yourPriceLabel}</p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{pricing.yourPriceLabel}</p>
+              {hasLaunchPrice ? (
+                <span className="rounded-full bg-brand-pink px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-ink">{pricing.launchBadge}</span>
+              ) : null}
+            </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
+              <div className={`rounded-2xl p-5 ring-1 ${hasLaunchPrice ? "bg-white/15 ring-brand-pink/70" : "bg-white/10 ring-white/15"}`}>
                 <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.oneTime.label}</p>
-                <p className="mt-2 font-display text-4xl">{pricing.oneTime.price}</p>
+                {hasLaunchPrice ? (
+                  <p className="mt-2 text-base text-white/70">
+                    <span className="sr-only">{pricing.regularPriceLabel} </span>
+                    <s className="decoration-brand-pink/80 decoration-2">{pricing.oneTime.regularPrice}</s>
+                  </p>
+                ) : null}
+                <p className={`font-display text-4xl ${hasLaunchPrice ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{pricing.oneTime.price}</p>
                 <p className="mt-1 text-xs text-white/75">{pricing.oneTime.note}</p>
               </div>
               <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
                 <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.plan.label}</p>
-                <p className="mt-2 font-display text-3xl leading-tight">{pricing.plan.price}</p>
+                {hasLaunchPrice ? (
+                  <p className="mt-2 text-sm text-white/70">
+                    <span className="sr-only">{pricing.regularPriceLabel} </span>
+                    <s className="decoration-brand-pink/80 decoration-2">{pricing.plan.regularPrice}</s>
+                  </p>
+                ) : null}
+                <p className={`font-display text-3xl leading-tight ${hasLaunchPrice ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{pricing.plan.price}</p>
                 <p className="mt-1 text-xs text-white/75">{pricing.plan.note}</p>
               </div>
             </div>

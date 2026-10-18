@@ -1,5 +1,5 @@
 import { about, faq, meta } from "@/content/copy";
-import { LINKS, PAGE_SLUG, PRICING, SITE_URL } from "@/config/site";
+import { EFFECTIVE_PRICING, LINKS, PAGE_SLUG, PRICING, SITE_URL } from "@/config/site";
 
 /** Course + FAQPage structured data. Native script tag, as the Next.js JSON-LD guide recommends. */
 export function JsonLd() {
@@ -30,7 +30,7 @@ export function JsonLd() {
     },
     offers: {
       "@type": "Offer",
-      price: PRICING.oneTime,
+      price: EFFECTIVE_PRICING.oneTime,
       priceCurrency: PRICING.currency,
       availability: "https://schema.org/PreOrder",
       url: pageUrl,

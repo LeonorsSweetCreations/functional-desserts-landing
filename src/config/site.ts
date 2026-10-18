@@ -24,6 +24,7 @@ export const SITE_URL =
 /** Same slug as the current Systeme.io page. Never change this. */
 export const PAGE_SLUG = "/functionaldessertsprogram-main";
 
+/** Regular prices (Leonor, 2026-10-15). The plan total is always shown explicitly. */
 export const PRICING = {
   currency: "EUR",
   oneTime: 299,
@@ -34,6 +35,43 @@ export const PRICING = {
   guaranteeDays: 14,
   mentorshipMonths: 12,
 } as const;
+
+/**
+ * Launch price (optional). Set NEXT_PUBLIC_LAUNCH_PRICE (e.g. 199) and the price card, the sticky
+ * bar, the FAQ and the JSON-LD offer show the regular price struck through and the launch price
+ * highlighted. The payment plan keeps the regular markup (plan total / one-time price, 350 / 299)
+ * and its total is rounded to whole euros so that 4 installments divide it exactly.
+ * A missing, malformed, zero, negative or not-lower value is ignored and the regular price shows.
+ */
+function parseLaunchPrice(raw: string | undefined, regular: number): number | null {
+  const v = raw?.trim() || "";
+  if (!/^[0-9]{1,5}(\.[0-9]{1,2})?$/.test(v)) return null;
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 && n < regular ? n : null;
+}
+export const LAUNCH_PRICE: number | null = parseLaunchPrice(process.env.NEXT_PUBLIC_LAUNCH_PRICE, PRICING.oneTime);
+export const hasLaunchPrice = LAUNCH_PRICE !== null;
+
+function planFor(oneTime: number) {
+  const { installments, total: regularTotal } = PRICING.plan;
+  const total = Math.round((oneTime * regularTotal) / PRICING.oneTime);
+  return { installments, amount: total / installments, total };
+}
+
+/** The prices the page actually shows: the launch price when set, otherwise the regular ones. */
+export const EFFECTIVE_PRICING = {
+  oneTime: LAUNCH_PRICE ?? PRICING.oneTime,
+  plan: LAUNCH_PRICE === null ? PRICING.plan : planFor(LAUNCH_PRICE),
+} as const;
+
+/** "€299", "€87.50". Whole euros without decimals, anything else with two. */
+export function formatEur(n: number): string {
+  return Number.isInteger(n) ? `€${n}` : `€${n.toFixed(2)}`;
+}
+/** Installments always carry two decimals ("€87.50"), as on the current page. */
+export function formatInstallment(n: number): string {
+  return `€${n.toFixed(2)}`;
+}
 
 /** Every outbound URL, kept identical to the links already published. */
 export const LINKS = {

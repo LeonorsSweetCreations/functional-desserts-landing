@@ -25,7 +25,7 @@ Problems with the current page that this project fixes: 370 to 456 KB of HTML wi
 | Domain | Decided in phase 3 |
 | Assets from Leonor | Text testimonials, high-res photos, original logo, hero video |
 | Tracking | GTM + Meta Pixel, IDs provided in phase 3, disabled on localhost, behind cookie consent |
-| Price | €299 one-time (was €199, changed by Leonor on 2026-10-15) or 4 x €87.50 (plan total €350 shown explicitly; was 4 x €62.50, changed 2026-10-15) |
+| Price | €299 one-time (was €199, changed by Leonor on 2026-10-15) or 4 x €87.50 (plan total €350 shown explicitly; was 4 x €62.50, changed 2026-10-15). Optional launch price through `NEXT_PUBLIC_LAUNCH_PRICE` (2026-10-18): €299 struck through, launch price highlighted, plan recomputed with the same markup |
 | Secondary lead magnet | Free guide "Indulge in Wellness" |
 | Success metrics | Conversion, Lighthouse 90+, mobile-first, SEO |
 | Mentorship (central message) | Included in €299 for 12 months: monthly live Q&A (was weekly, changed 2026-10-12), monthly cook-along, recordings, personal recipe feedback, private community, direct messages between lives. Zoom + private group |
@@ -74,6 +74,10 @@ API: `POST /api/leads` validates with zod, inserts, calls Systeme.io, marks sync
 
 ```
 NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_LAUNCH_MODE=
+NEXT_PUBLIC_LAUNCH_DATE=
+NEXT_PUBLIC_LAUNCH_PRICE=
+NEXT_PUBLIC_LEAD_CAPTURE=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
@@ -126,11 +130,19 @@ NEXT_PUBLIC_META_PIXEL_ID=
 - [x] Env vars on Vercel (production and preview): `NEXT_PUBLIC_SITE_URL=https://program.leonors.com`, `NEXT_PUBLIC_LAUNCH_MODE=waitlist`, `NEXT_PUBLIC_LEAD_CAPTURE=native`, `SYSTEME_API_KEY` (sensitive), `SYSTEME_TAG_WAITLIST`, `SYSTEME_TAG_FREE_GUIDE`
 - [x] CNAME `program` added by Leonor on Cloudflare (2026-10-16), `https://program.leonors.com/functionaldessertsprogram-main` answers 200 with a valid certificate
 - [x] Domain `program.leonors.com` added to the Vercel project (2026-10-16)
-- [ ] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate
+- [x] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate (done 2026-10-16, confirmed 2026-10-18)
 - [x] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main` (2026-10-16: meta refresh plus a script that keeps query string and hash, in the head code of the old page, settings > tracking > header code; the old page itself was not deleted)
 - [ ] GTM and Meta Pixel IDs added
 - [x] End-to-end test of the waiting list form in production (2026-10-16, contact created in Systeme.io with the tag `FDP Waitlist`)
 - [ ] End-to-end test of the free guide form in production with a real email (localhost test passed on 2026-10-15)
+
+## Phase 4: Launch (price, date, opening the doors)
+
+- [x] Launch price mechanism (2026-10-18): `NEXT_PUBLIC_LAUNCH_PRICE` (e.g. `199`) shows €299 struck through and the launch price highlighted on the price card and on the sticky bar; the FAQ answer and the JSON-LD offer use it too. The payment plan keeps the regular markup (350 / 299), its total is rounded to whole euros and divided by 4: with 199 the plan is 4 x €58.25, total €233. Unset, empty, malformed, zero or not lower than €299: the page shows €299 and 4 x €87.50 as before. Checked with `pnpm build` in both states and a headless Chrome render at 412 and 1280 px
+- [x] Countdown confirmed in waitlist mode with `NEXT_PUBLIC_LAUNCH_DATE` set (2026-10-18): the price card shows "Doors open on 1 December 2026" and, after hydration, "Doors open in" with days, hours and minutes, ticking once a minute. The static HTML carries no countdown (client only, by design, see the notes of 2026-10-12). Unset: no countdown, text "Enrolment opens soon"
+- [ ] Leonor decides the launch price and the launch date; set `NEXT_PUBLIC_LAUNCH_PRICE` and `NEXT_PUBLIC_LAUNCH_DATE` on Vercel (production) and redeploy
+- [ ] On launch day: `NEXT_PUBLIC_LAUNCH_MODE=open` on Vercel and redeploy; every CTA then points to the Systeme.io cart. The cart price lives in Systeme.io, so confirm the cart charges the same launch price and plan as the page shows
+- [ ] When the launch offer ends: remove `NEXT_PUBLIC_LAUNCH_PRICE` on Vercel and redeploy; the page goes back to €299 and 4 x €87.50
 
 ## Notes from implementation (2026-10-12)
 
@@ -149,9 +161,14 @@ NEXT_PUBLIC_META_PIXEL_ID=
 - Waiting list (Leonor, 2026-10-16, option B): form on this page, in the hero and on the price card; every button scrolls to the price card form. Tag `FDP Waitlist`, the same one the Systeme.io page `https://healthy.leonors.com/waiting-list` assigns (confirmed on 2026-10-16 by Leonor's test on that page). Free guide: the form on this page sends the contact to Systeme.io with the tag "[EBOOK][REGISTO] Indulge in Wellness" (`LEAD_CAPTURE=native`, default; Supabase optional). `NEXT_PUBLIC_LEAD_CAPTURE=systeme` swaps that form for a link to the opt-in page.
 - Leonor approved phases 2 and 3 ("Segue com os passos necessários, para acrescentar esta página ao meu website").
 
+## Decisions of 2026-10-18
+
+- Launch price: a single public env var, `NEXT_PUBLIC_LAUNCH_PRICE`, no code change at launch. The regular price stays the source of truth in `src/config/site.ts` (`PRICING`); the page reads `EFFECTIVE_PRICING`. Plan formula: total = round(launch price x 350 / 299), installment = total / 4, so the markup of the regular plan is kept and the total always divides exactly by 4.
+- The CNAME `program` on Cloudflare is done (2026-10-16); the duplicate open item in phase 3 is now ticked.
+
 ## Open items (do not block)
 
-- Exact launch date (`LAUNCH_DATE`)
+- Exact launch date (`LAUNCH_DATE`) and launch price (`NEXT_PUBLIC_LAUNCH_PRICE`)
 - Mentorship: usual day and time of the monthly live, which private group platform, € value to show for mentorship in the value stack
 - Assets: testimonials, photos, logo, video
 - Final domain and tracking IDs

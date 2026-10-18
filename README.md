@@ -34,7 +34,7 @@ pnpm build && pnpm start   # production build on http://localhost:3000
 
 ## Switching from waiting list to open doors
 
-Set `NEXT_PUBLIC_LAUNCH_MODE=open` in `.env.local` (or on Vercel) and redeploy. Every call to action then points to the Systeme.io cart. Set `NEXT_PUBLIC_LAUNCH_DATE` to an ISO date to show the countdown while in waiting list mode.
+Set `NEXT_PUBLIC_LAUNCH_MODE=open` in `.env.local` (or on Vercel) and redeploy. Every call to action then points to the Systeme.io cart. Set `NEXT_PUBLIC_LAUNCH_DATE` to an ISO date to show the countdown while in waiting list mode. Set `NEXT_PUBLIC_LAUNCH_PRICE` (e.g. `199`) to show €299 struck through and the launch price highlighted, with the payment plan recomputed at the same markup (199 gives 4 x €58.25, total €233); remove it to go back to €299.
 
 ## Where the buttons go
 
