@@ -36,7 +36,7 @@ export default async function ProgramPage() {
         <ForWho />
         <Modules />
         <Mentorship launch={launch} />
-        <Bonuses />
+        <Bonuses launch={launch} />
         <Suspense fallback={null}>
           <Testimonials />
         </Suspense>

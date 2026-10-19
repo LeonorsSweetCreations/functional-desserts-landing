@@ -15,6 +15,8 @@ function formatLaunchDate(iso: string) {
 
 export function Pricing({ launch }: { launch: LaunchState }) {
   const launchDateText = LAUNCH_DATE ? formatLaunchDate(LAUNCH_DATE) : null;
+  /** Single switch for every euro amount on the page: nothing is priced while doors are closed. */
+  const isOpen = launch.open;
   const lp = launch.launchPrice;
   const ps = priceStrings(lp);
 
@@ -27,7 +29,7 @@ export function Pricing({ launch }: { launch: LaunchState }) {
           {/* What you get */}
           <div className="reveal rounded-3xl border border-brand-linen bg-brand-cream/60 p-7 sm:p-9">
             <ul className="divide-y divide-brand-linen">
-              {pricing.includes.map((item) => (
+              {pricing.includes(isOpen).map((item) => (
                 <li key={item.heading} className="flex items-start gap-4 py-4 first:pt-0 last:pb-0">
                   <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${"highlight" in item && item.highlight ? "bg-brand-pink text-brand-ink" : "bg-brand-teal-pale text-brand-teal-dark"}`}>
                     <Check aria-hidden className="h-4 w-4" />
@@ -42,49 +44,60 @@ export function Pricing({ launch }: { launch: LaunchState }) {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex flex-wrap items-baseline justify-between gap-2 border-t border-brand-linen pt-5">
-              <p className="text-sm text-brand-muted">{pricing.totalValueLabel}</p>
-              <p className="text-right">
-                <span className="font-display text-2xl text-brand-ink line-through decoration-brand-rose/70">{pricing.totalValue}</span>
-                <span className="block text-xs text-brand-muted">{pricing.totalValueNote}</span>
-              </p>
-            </div>
+            {isOpen ? (
+              <div className="mt-6 flex flex-wrap items-baseline justify-between gap-2 border-t border-brand-linen pt-5">
+                <p className="text-sm text-brand-muted">{pricing.totalValueLabel}</p>
+                <p className="text-right">
+                  <span className="font-display text-2xl text-brand-ink line-through decoration-brand-rose/70">{pricing.totalValue}</span>
+                  <span className="block text-xs text-brand-muted">{pricing.totalValueNote}</span>
+                </p>
+              </div>
+            ) : null}
           </div>
 
           {/* Price card */}
           <div id={ANCHORS.waitlist} className="reveal scroll-mt-24 rounded-3xl bg-brand-teal-dark p-7 text-white shadow-card-lg sm:p-9">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{lp ? pricing.yourLaunchPriceLabel : pricing.yourPriceLabel}</p>
-              {lp ? (
-                <span className="rounded-full bg-brand-pink px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-ink">{pricing.launchBadge}</span>
-              ) : null}
-            </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className={`rounded-2xl p-5 ring-1 ${lp ? "bg-white/15 ring-brand-pink/70" : "bg-white/10 ring-white/15"}`}>
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.oneTime.label}</p>
-                {lp ? (
-                  <p className="mt-2 text-base text-white/70">
-                    <span className="sr-only">{pricing.regularPriceLabel} </span>
-                    <s className="decoration-brand-pink/80 decoration-2">{ps.regularOneTime}</s>
-                  </p>
-                ) : null}
-                <p className={`font-display text-4xl ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.oneTime}</p>
-                <p className="mt-1 text-xs text-white/75">{pricing.oneTime.note}</p>
-              </div>
+            {isOpen ? (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-teal-light">{lp ? pricing.yourLaunchPriceLabel : pricing.yourPriceLabel}</p>
+                  {lp ? (
+                    <span className="rounded-full bg-brand-pink px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-ink">{pricing.launchBadge}</span>
+                  ) : null}
+                </div>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className={`rounded-2xl p-5 ring-1 ${lp ? "bg-white/15 ring-brand-pink/70" : "bg-white/10 ring-white/15"}`}>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.oneTime.label}</p>
+                    {lp ? (
+                      <p className="mt-2 text-base text-white/70">
+                        <span className="sr-only">{pricing.regularPriceLabel} </span>
+                        <s className="decoration-brand-pink/80 decoration-2">{ps.regularOneTime}</s>
+                      </p>
+                    ) : null}
+                    <p className={`font-display text-4xl ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.oneTime}</p>
+                    <p className="mt-1 text-xs text-white/75">{pricing.oneTime.note}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.plan.label}</p>
+                    {lp ? (
+                      <p className="mt-2 text-sm text-white/70">
+                        <span className="sr-only">{pricing.regularPriceLabel} </span>
+                        <s className="decoration-brand-pink/80 decoration-2">{ps.regularPlan}</s>
+                      </p>
+                    ) : null}
+                    <p className={`font-display text-3xl leading-tight ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.plan}</p>
+                    <p className="mt-1 text-xs text-white/75">{ps.planNote}</p>
+                  </div>
+                </div>
+              </>
+            ) : (
               <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/15">
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/70">{pricing.plan.label}</p>
-                {lp ? (
-                  <p className="mt-2 text-sm text-white/70">
-                    <span className="sr-only">{pricing.regularPriceLabel} </span>
-                    <s className="decoration-brand-pink/80 decoration-2">{ps.regularPlan}</s>
-                  </p>
-                ) : null}
-                <p className={`font-display text-3xl leading-tight ${lp ? "mt-0.5 text-brand-pink" : "mt-2"}`}>{ps.plan}</p>
-                <p className="mt-1 text-xs text-white/75">{ps.planNote}</p>
+                <p className="font-display text-2xl leading-tight text-brand-pink">{pricing.waitlistPriceTitle}</p>
+                <p className="mt-2 text-sm leading-relaxed text-white/80">{pricing.waitlistPriceText}</p>
               </div>
-            </div>
+            )}
 
-            {launch.open ? (
+            {isOpen ? (
               <div className="mt-7">
                 <Button href={launch.checkoutUrl} size="lg" className="w-full">
                   {pricing.ctaOpen}

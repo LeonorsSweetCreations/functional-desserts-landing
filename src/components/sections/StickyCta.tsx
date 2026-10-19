@@ -25,8 +25,10 @@ export function StickyCta({ launch }: { launch: LaunchState }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const href = launch.open ? launch.checkoutUrl : WAITLIST_HREF;
-  const label = launch.open ? sticky.open : sticky.waitlist;
+  /** Single switch for every euro amount: while doors are closed the bar only says when they open. */
+  const isOpen = launch.open;
+  const href = isOpen ? launch.checkoutUrl : WAITLIST_HREF;
+  const label = isOpen ? sticky.open : sticky.waitlist;
   const lp = launch.launchPrice;
   const ps = priceStrings(lp);
 
@@ -37,7 +39,9 @@ export function StickyCta({ launch }: { launch: LaunchState }) {
     >
       <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
         <p className="text-xs leading-tight text-brand-muted">
-          {lp ? (
+          {!isOpen ? (
+            <span className="block font-semibold text-brand-ink">{sticky.closedNote}</span>
+          ) : lp ? (
             <>
               <span className="block">
                 <span className="sr-only">{sticky.regularPriceLabel} </span>

@@ -6,7 +6,7 @@
  * states an outcome for the student, British spelling.
  */
 
-import { LINKS, PRICING, formatEur, formatInstallment, pricingFor } from "@/config/site";
+import { LINKS, PRICING, formatEur, formatInstallment, pricingFor, type LaunchState } from "@/config/site";
 
 /**
  * Price strings for the current state. `launchPrice` comes from the launch state resolved on the
@@ -326,41 +326,51 @@ export const about = {
   portraitAlt: "Leonor Capristano in her kitchen",
 } as const;
 
+/** Shown instead of a euro value while doors are closed (no amounts on the page before launch). */
+const includedLabel = "Included";
+
+/** Items of the "Everything you get" list, with the values shown while doors are open. */
+const includesAll = [
+  {
+    heading: "12 months of live mentorship",
+    text: "Monthly Q&A, monthly cook-along, recordings, personal feedback, private community and direct messages.",
+    value: includedLabel,
+    highlight: true,
+  },
+  {
+    heading: "The complete program",
+    text: "5 modules, 30+ video lessons, PDF guides, charts, quizzes and worksheets.",
+    value: `€${PRICING.courseValue}`,
+  },
+  {
+    heading: "4 bonuses",
+    text: "DIY Recipes, Syrups and Frostings, Raw Vegan Desserts, Cakes Desserts and Bread, with ebooks.",
+    value: `€${PRICING.bonusesValue}`,
+  },
+  {
+    heading: "Lifetime access to every lesson",
+    text: "Watch again whenever you need, including future updates.",
+    value: includedLabel,
+  },
+  {
+    heading: `${PRICING.guaranteeDays}-day money-back guarantee`,
+    text: "Try it. If it is not for you, you get every cent back.",
+    value: includedLabel,
+  },
+] as const;
+
 export const pricing = {
   eyebrow: "Enrolment",
   title: "Everything you get when you join",
-  includes: [
-    {
-      heading: "12 months of live mentorship",
-      text: "Monthly Q&A, monthly cook-along, recordings, personal feedback, private community and direct messages.",
-      value: "Included",
-      highlight: true,
-    },
-    {
-      heading: "The complete program",
-      text: "5 modules, 30+ video lessons, PDF guides, charts, quizzes and worksheets.",
-      value: `€${PRICING.courseValue}`,
-    },
-    {
-      heading: "4 bonuses",
-      text: "DIY Recipes, Syrups and Frostings, Raw Vegan Desserts, Cakes Desserts and Bread, with ebooks.",
-      value: `€${PRICING.bonusesValue}`,
-    },
-    {
-      heading: "Lifetime access to every lesson",
-      text: "Watch again whenever you need, including future updates.",
-      value: "Included",
-    },
-    {
-      heading: `${PRICING.guaranteeDays}-day money-back guarantee`,
-      text: "Try it. If it is not for you, you get every cent back.",
-      value: "Included",
-    },
-  ],
+  /** The "Everything you get" list. Euro values appear only while doors are open (`launch.open`). */
+  includes: (isOpen: boolean) => includesAll.map((item) => (isOpen ? item : { ...item, value: includedLabel })),
   totalValueLabel: "Value of the content and bonuses",
   totalValue: `€${PRICING.totalValueBeforeMentorship}`,
   totalValueNote: "plus a full year of mentorship",
   yourPriceLabel: "Your price",
+  /** Price card while doors are closed: no amounts, the waiting list hears the price first. */
+  waitlistPriceTitle: "Launch price revealed to the waiting list first",
+  waitlistPriceText: "Join the list and you get first access and the lowest price we will ever offer.",
   yourLaunchPriceLabel: "Your launch price",
   launchBadge: "Launch price",
   regularPriceLabel: "Regular price",
@@ -385,8 +395,9 @@ export const pricing = {
 /** `items` is a function because the payment plan answer depends on the launch state. */
 export const faq = {
   title: "Questions you may still have",
-  items: (launchPrice: boolean) => {
-    const p = priceStrings(launchPrice);
+  items: (launch: LaunchState) => {
+    const isOpen = launch.open;
+    const p = priceStrings(launch.launchPrice);
     return [
     {
       q: "Do these desserts actually taste good?",
@@ -430,7 +441,9 @@ export const faq = {
     },
     {
       q: "How does the payment plan work?",
-      a: launchPrice
+      a: !isOpen
+        ? "You will be able to pay in one payment or in 4 monthly instalments. Exact prices are announced to the waiting list first."
+        : launch.launchPrice
         ? `At the launch price you pay ${p.oneTime} once, or ${p.installments} monthly payments of ${p.installment} (total ${p.planTotal}). The regular price is ${p.regularOneTime}, or ${p.regularPlan} (total ${p.regularPlanTotal}). You get full access from the first payment.`
         : `You can pay ${p.oneTime} once, or ${p.installments} monthly payments of ${p.installment} (total ${p.planTotal}). You get full access from the first payment.`,
     },
@@ -484,6 +497,8 @@ export const forms = {
 export const sticky = {
   waitlist: "Join the waiting list",
   open: "Join the program",
+  /** Only text in the bar while doors are closed (no amounts before launch). */
+  closedNote: "Doors open in December",
   regularPriceLabel: "Regular price",
   /** "€299 or 4 x €87.50" (regular) or, with the launch price active, the launch values. */
   priceNote: (launchPrice: boolean) => {

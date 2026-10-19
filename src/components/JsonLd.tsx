@@ -4,6 +4,8 @@ import { LINKS, PAGE_SLUG, PRICING, SITE_URL, pricingFor, type LaunchState } fro
 /** Course + FAQPage structured data. Native script tag, as the Next.js JSON-LD guide recommends. */
 export function JsonLd({ launch }: { launch: LaunchState }) {
   const pageUrl = `${SITE_URL}${PAGE_SLUG}`;
+  /** No offer (and no price) in the structured data while doors are closed. */
+  const isOpen = launch.open;
 
   const course = {
     "@context": "https://schema.org",
@@ -28,19 +30,23 @@ export function JsonLd({ launch }: { launch: LaunchState }) {
       courseMode: "online",
       courseWorkload: "PT12M",
     },
-    offers: {
-      "@type": "Offer",
-      price: pricingFor(launch.launchPrice).oneTime,
-      priceCurrency: PRICING.currency,
-      availability: launch.open ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
-      url: pageUrl,
-    },
+    ...(isOpen
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: pricingFor(launch.launchPrice).oneTime,
+            priceCurrency: PRICING.currency,
+            availability: "https://schema.org/InStock",
+            url: pageUrl,
+          },
+        }
+      : {}),
   };
 
   const faqPage = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faq.items(launch.launchPrice).map((item) => ({
+    mainEntity: faq.items(launch).map((item) => ({
       "@type": "Question",
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },
