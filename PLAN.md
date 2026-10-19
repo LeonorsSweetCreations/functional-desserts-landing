@@ -134,7 +134,7 @@ NEXT_PUBLIC_META_PIXEL_ID=
 - [x] Domain `program.leonors.com` added to the Vercel project (2026-10-16)
 - [x] Leonor adds the CNAME in Cloudflare (name `program`, target `01c315d9c9bc9e5a.vercel-dns-017.com`, proxy off), Vercel issues the certificate (done 2026-10-16, confirmed 2026-10-18)
 - [x] Redirect on Systeme.io from `healthy.leonors.com/functionaldessertsprogram-main` to `program.leonors.com/functionaldessertsprogram-main` (2026-10-16: meta refresh plus a script that keeps query string and hash, in the head code of the old page, settings > tracking > header code; the old page itself was not deleted)
-- [ ] GTM and Meta Pixel IDs added
+- [x] GTM and Meta Pixel IDs added (2026-10-19: `NEXT_PUBLIC_GTM_ID` and `NEXT_PUBLIC_META_PIXEL_ID` set on Vercel for production and preview, production redeployed. Verified in Chrome on the live page: with consent denied no third party script loads; after clicking Accept the page requests `gtm.js?id=GTM-5CXKS2L`, `fbevents.js` and the Pixel config for id 334659672895495, `window.fbq` and `window.google_tag_manager` exist, and the GTM container loads three GA4 tags. No CSP block observed, the only third party hosts were googletagmanager.com, connect.facebook.net and google-analytics.com, all already allowed)
 - [x] End-to-end test of the waiting list form in production (2026-10-16, contact created in Systeme.io with the tag `FDP Waitlist`)
 - [ ] End-to-end test of the free guide form in production with a real email (localhost test passed on 2026-10-15)
 

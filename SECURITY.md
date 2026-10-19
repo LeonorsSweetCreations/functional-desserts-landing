@@ -99,11 +99,12 @@ Nota de 15 e 16 de outubro de 2026: a página tem três formulários, lista de e
 - [x] Cabeçalhos confirmados no deploy de produção de 2026-10-16: CSP, HSTS, nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy
 - [x] Testar o formulário da lista de espera em produção e confirmar que chega ao Systeme.io (2026-10-16)
 - [ ] Testar o formulário do guia grátis em produção com um email real
+- [x] Ids reais de GTM e Meta Pixel em produção (2026-10-19). São identificadores públicos por desenho, passam na validação de formato, e os scripts só carregam depois de consentimento (verificado no browser: com consentimento recusado nenhum domínio de terceiros é contactado; com consentimento aceite carregam googletagmanager.com, connect.facebook.net e google-analytics.com, todos cobertos pela CSP, sem bloqueios observados)
 - [ ] Rever este ficheiro sempre que se adicionar uma rota, tabela, integração ou variável
 
 ## O que não foi verificado
 
-- Comportamento da CSP com o GTM e o Pixel reais (sem ids em localhost). Se o GTM carregar tags de terceiros não listadas, será preciso alargar `script-src` e `connect-src` em `next.config.ts`.
+- Se no futuro o GTM carregar tags de terceiros não listadas na CSP, será preciso alargar `script-src` e `connect-src` em `next.config.ts`. A 19 de outubro de 2026 o contentor carregava apenas GTM, GA4 e Meta Pixel, todos já permitidos.
 - Configuração da conta Vercel e do Supabase (2FA, membros, backups). Está fora do código e cabe à Leonor.
 
 ## Adenda de 12 de outubro de 2026 (rascunho visual)
