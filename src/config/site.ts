@@ -29,6 +29,19 @@ const launchDate = parseIsoDate(process.env.NEXT_PUBLIC_LAUNCH_DATE);
 /** Doors open at this moment in "auto" mode; also drives the countdown while closed. */
 export const LAUNCH_DATE: string | null = launchDate?.iso ?? null;
 export const LAUNCH_DATE_MS: number | null = launchDate?.ms ?? null;
+/**
+ * Launch month and date as words (Leonor, 2026-10-20): every "Doors open ..." sentence on the page
+ * follows NEXT_PUBLIC_LAUNCH_DATE. Without a date the month falls back to December.
+ */
+export const LAUNCH_MONTH_FALLBACK = "December";
+/** "December": the month of NEXT_PUBLIC_LAUNCH_DATE, or the fallback while no date is set. */
+export const LAUNCH_MONTH: string = launchDate
+  ? new Intl.DateTimeFormat("en-GB", { month: "long", timeZone: "UTC" }).format(launchDate.ms)
+  : LAUNCH_MONTH_FALLBACK;
+/** "1 December 2026", or null while no date is set. */
+export const LAUNCH_DATE_TEXT: string | null = launchDate
+  ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(launchDate.ms)
+  : null;
 /** Optional end of the launch offer. From this moment the regular prices show again. */
 export const LAUNCH_PRICE_UNTIL_MS: number | null = parseIsoDate(process.env.NEXT_PUBLIC_LAUNCH_PRICE_UNTIL)?.ms ?? null;
 

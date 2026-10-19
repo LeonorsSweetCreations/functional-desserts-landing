@@ -7,14 +7,7 @@ import { LeadForm } from "@/components/ui/LeadForm";
 import { pricing, forms, priceStrings } from "@/content/copy";
 import { ANCHORS, LAUNCH_DATE, LINKS, usesNativeForms, type LaunchState } from "@/config/site";
 
-function formatLaunchDate(iso: string) {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(d);
-}
-
 export function Pricing({ launch }: { launch: LaunchState }) {
-  const launchDateText = LAUNCH_DATE ? formatLaunchDate(LAUNCH_DATE) : null;
   /** Single switch for every euro amount on the page: nothing is priced while doors are closed. */
   const isOpen = launch.open;
   const lp = launch.launchPrice;
@@ -107,9 +100,7 @@ export function Pricing({ launch }: { launch: LaunchState }) {
             ) : (
               <div className="mt-7 rounded-2xl bg-white p-5 text-brand-ink sm:p-6">
                 <h3 className="text-2xl">{pricing.closedTitle}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-brand-muted">
-                  {launchDateText ? pricing.closedTextWithDate.replace("{date}", launchDateText) : pricing.closedText}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-brand-muted">{pricing.closedText}</p>
                 {LAUNCH_DATE ? <Countdown iso={LAUNCH_DATE} label="Doors open in" /> : null}
                 <div className="mt-5">
                   {usesNativeForms ? (

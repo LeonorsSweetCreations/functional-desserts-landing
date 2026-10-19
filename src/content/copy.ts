@@ -6,7 +6,7 @@
  * states an outcome for the student, British spelling.
  */
 
-import { LINKS, PRICING, formatEur, formatInstallment, pricingFor, type LaunchState } from "@/config/site";
+import { LAUNCH_DATE_TEXT, LAUNCH_MONTH, LINKS, PRICING, formatEur, formatInstallment, pricingFor, type LaunchState } from "@/config/site";
 
 /**
  * Price strings for the current state. `launchPrice` comes from the launch state resolved on the
@@ -26,6 +26,16 @@ export function priceStrings(launchPrice: boolean) {
     regularPlanTotal: formatEur(PRICING.plan.total),
   };
 }
+
+/**
+ * "Doors open ..." sentences, driven by NEXT_PUBLIC_LAUNCH_DATE (Leonor, 2026-10-20).
+ * month: "Doors open in December" (hero, sticky bar). date: "Doors open on 1 December 2026" where
+ * the countdown lives (price card), falling back to the month sentence while no date is set.
+ */
+export const doorsOpen = {
+  month: `Doors open in ${LAUNCH_MONTH}`,
+  date: LAUNCH_DATE_TEXT ? `Doors open on ${LAUNCH_DATE_TEXT}` : `Doors open in ${LAUNCH_MONTH}`,
+} as const;
 
 export const meta = {
   title: "The Functional Desserts Program | Healthy desserts with a year of live mentorship",
@@ -62,8 +72,7 @@ export const hero = {
   ctaOpen: "Join the program",
   secondaryCta: "See what you will learn",
   proofs: ["30+ video lessons", "Monthly live sessions", `${PRICING.guaranteeDays}-day money-back guarantee`],
-  waitlistNote:
-    "Doors are closed right now. Join the waiting list and you will be the first to know when they open, with the launch price.",
+  waitlistNote: `${doorsOpen.month}. Join the waiting list and you will be the first to know when they open, with the launch price.`,
   videoPlaceholder: "A short welcome video from Leonor will play here.",
   mediaTag: "Gluten-free · Dairy-free · Refined-sugar-free",
   mediaAlt: "Leonor holding a raspberry cake made without gluten, dairy or refined sugar",
@@ -384,9 +393,7 @@ export const pricing = {
   ctaOpen: "Join the program",
   ctaWaitlist: "Join the waiting list",
   closedTitle: "Doors are closed right now",
-  closedText:
-    "Enrolment opens soon. Join the waiting list and you get first access and the launch price before anyone else.",
-  closedTextWithDate: "Doors open on {date}. Join the waiting list and you get first access and the launch price.",
+  closedText: `${doorsOpen.date}. Join the waiting list and you get first access and the launch price before anyone else.`,
   guaranteeTitle: `${PRICING.guaranteeDays}-day money-back guarantee`,
   guaranteeText: `Try the program for ${PRICING.guaranteeDays} days. If it is not what you need, write to ${LINKS.supportEmail} and you get a full refund.`,
   secure: "Secure checkout. Prices in euros, VAT included where applicable.",
@@ -497,8 +504,8 @@ export const forms = {
 export const sticky = {
   waitlist: "Join the waiting list",
   open: "Join the program",
-  /** Only text in the bar while doors are closed (no amounts before launch). */
-  closedNote: "Doors open in December",
+  /** Only text in the bar while doors are closed (no amounts before launch). Follows the launch date. */
+  closedNote: doorsOpen.month,
   regularPriceLabel: "Regular price",
   /** "€299 or 4 x €87.50" (regular) or, with the launch price active, the launch values. */
   priceNote: (launchPrice: boolean) => {
