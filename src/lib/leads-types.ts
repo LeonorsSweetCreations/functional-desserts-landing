@@ -1,11 +1,28 @@
 import { z } from "zod";
 
+/**
+ * "leonor" -> "Leonor", "maria joão" -> "Maria João", "ana-rita" -> "Ana-Rita",
+ * "LEONOR" -> "Leonor". Collapses repeated spaces.
+ */
+export function capitalizeName(name: string): string {
+  return name
+    .replace(/\s+/g, " ")
+    .toLocaleLowerCase()
+    .replace(/(^|[\s\-'])(\p{L})/gu, (_m, sep: string, ch: string) => sep + ch.toLocaleUpperCase());
+}
+
 export const LEAD_SOURCES = ["waitlist", "free_guide"] as const;
 export type LeadSource = (typeof LEAD_SOURCES)[number];
 
 export const leadSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(254),
-  firstName: z.string().trim().max(80).optional().or(z.literal("")),
+  firstName: z
+    .string()
+    .trim()
+    .max(80)
+    .transform(capitalizeName)
+    .optional()
+    .or(z.literal("")),
   source: z.enum(LEAD_SOURCES),
   consent: z.literal(true, { message: "Consent is required" }),
   utm: z
